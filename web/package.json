@@ -1,6 +1,6 @@
 {
   "name": "kandellab",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build": "bash ./scripts/build.sh",
     "dev": "bash ./scripts/dev.sh",

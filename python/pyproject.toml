@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kandellab"
-version = "1.0.0"
+version = "1.0.1"
 description = "KandelLab - Neuroscience Principles Code Lab: implement Kandel's Principles of Neural Science models in Python"
 requires-python = ">=3.9"
 license = { text = "MIT" }
