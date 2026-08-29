@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -60,8 +61,8 @@ function Navigation() {
 
 function NavLink({ href, label }: { href: string; label: string }) {
   return (
-    <a href={href} className="nav-link">
+    <Link href={href} className="nav-link">
       {label}
-    </a>
+    </Link>
   );
 }
