@@ -1,8 +1,19 @@
 import Link from 'next/link';
+import StarField from '@/components/star-field';
 
 export default function HomePage() {
   return (
     <article>
+      <div className="hero-black">
+        <StarField />
+        <div className="hero-ring" />
+        <div className="hero-ring2" />
+        <div className="hero-orbs">☉ ☽ ☿ ♀ ♂ ♃ ♄</div>
+        <h1>KandelLab</h1>
+        <div className="hero-sub">Principles of Neural Science · in Simulation</div>
+        <div className="hero-orbs">☿ ♀ ♂ ♃ ♄ ☽ ☉</div>
+      </div>
+
       <section className="mb-8">
         <p className="text-base leading-relaxed text-[var(--ink)] mb-4">
           <span className="font-[var(--font-display)] text-2xl text-[var(--oxide)]">K</span>
