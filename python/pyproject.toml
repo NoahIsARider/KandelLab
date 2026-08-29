@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kandellab"
+version = "1.0.0"
+description = "KandelLab - Neuroscience Principles Code Lab: implement Kandel's Principles of Neural Science models in Python"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Noah" }]
+keywords = [
+    "neuroscience",
+    "teaching",
+    "computational-neuroscience",
+    "hodgkin-huxley",
+    "hopfield",
+    "drift-diffusion",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy>=1.21",
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+neuro-lab = "KandelLab.main:main"
+
+[tool.setuptools.packages.find]
+include = ["KandelLab*"]
