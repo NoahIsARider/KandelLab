@@ -80,10 +80,15 @@
 }
 
 body {
+  background-color: var(--parchment);
   background-image:
+    url('/damask-light.png'),
     radial-gradient(ellipse at 20% 50%, rgba(196, 168, 130, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 80%, rgba(196, 168, 130, 0.1) 0%, transparent 50%);
+  background-size: 1300px auto, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-blend-mode: multiply, normal, normal, normal;
   min-height: 100vh;
 }
 
@@ -313,25 +318,7 @@ body {
 
 /* ============ KandelLab hero: black sky + stars + watermark ============ */
 
-/* Full-page watermark texture (public-domain damask ornament, CC0) */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url('/damask-ornament.png');
-  background-size: 1300px auto;
-  background-repeat: repeat;
-  opacity: 0.09;
-  mix-blend-mode: multiply;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Keep page content above the watermark layer */
-body > * {
-  position: relative;
-  z-index: 1;
-}
+/* (watermark moved into body background layers below) */
 
 /* Black-sky hero title block */
 .hero-black {
