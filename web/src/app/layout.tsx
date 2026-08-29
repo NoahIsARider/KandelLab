@@ -14,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="antialiased">
+        <div className="page-watermark" aria-hidden="true" />
         <div className="manuscript-page">
           <header className="text-center mb-8">
             <h1 className="font-[var(--font-display)] text-3xl md:text-4xl font-bold text-[var(--oxide)] tracking-[0.15em] uppercase mb-2">
