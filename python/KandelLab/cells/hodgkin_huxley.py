@@ -1,20 +1,22 @@
-"""Hodgkin–Huxley（HH）模型：动作电位的电压门控离子通道动力学。
+"""Hodgkin–Huxley (HH) model: voltage-gated ion channel dynamics of the action potential.
 
-核心概念 #3：动作电位是电压门控 Na⁺/K⁺ 通道的协同动力学产物。
+Core concept #3: the action potential is the product of the coordinated dynamics
+of voltage-gated Na⁺/K⁺ channels.
 
-模型（经典 4 变量 ODE，HH 1952，单位 mV / ms / µA/cm²）
+Model (classic 4-variable ODE, HH 1952, units mV / ms / µA/cm²)
 ------------------------------------------------------
     C_m · dV/dt = −(g_Na·m³·h·(V−E_Na) + g_K·n⁴·(V−E_K) + g_L·(V−E_L)) + I_ext
-    dm/dt = α_m(V)(1−m) − β_m(V)·m          （Na 激活）
-    dh/dt = α_h(V)(1−h) − β_h(V)·h          （Na 失活）
-    dn/dt = α_n(V)(1−n) − β_n(V)·n          （K 激活）
+    dm/dt = α_m(V)(1−m) − β_m(V)·m          (Na activation)
+    dh/dt = α_h(V)(1−h) − β_h(V)·h          (Na inactivation)
+    dn/dt = α_n(V)(1−n) − β_n(V)·n          (K activation)
 
-门控速率函数（V 以 mV 计，经典取值）：
+Gating rate functions (V in mV, classic values):
     α_m = 0.1(V+40)/(1−exp(−(V+40)/10))      β_m = 4·exp(−(V+65)/18)
     α_h = 0.07·exp(−(V+65)/20)               β_h = 1/(1+exp(−(V+35)/10))
     α_n = 0.01(V+55)/(1−exp(−(V+55)/10))     β_n = 0.125·exp(−(V+65)/80)
 
-验证锚点：静息 ≈ −65 mV、峰 ≈ +35 mV、阈值 ≈ −55 mV、绝对不应期 ≈ 2 ms。
+Verification anchors: rest ≈ −65 mV, peak ≈ +35 mV, threshold ≈ −55 mV,
+absolute refractory period ≈ 2 ms.
 """
 
 from __future__ import annotations
@@ -26,14 +28,14 @@ from ..utils.neuro import integrate_ode, detect_spikes
 
 
 # ---------------------------------------------------------------------------
-# 门控速率函数
+# Gating rate functions
 # ---------------------------------------------------------------------------
 def alpha_m(v):
     v = np.asarray(v, dtype=float)
     z = (v + 40.0) / 10.0
     with np.errstate(over="ignore", invalid="ignore"):
         denom = 1.0 - np.exp(-z)
-    zz = np.where(np.abs(z) < 1e-8, 1e-8, z)   # z→0 极限 = 1
+    zz = np.where(np.abs(z) < 1e-8, 1e-8, z)   # z→0 limit = 1
     out = zz / denom
     return np.where(np.isfinite(out), out, 0.0)
 
@@ -56,7 +58,7 @@ def alpha_n(v):
     z = (v + 55.0) / 10.0
     with np.errstate(over="ignore", invalid="ignore"):
         denom = 1.0 - np.exp(-z)
-    zz = np.where(np.abs(z) < 1e-8, 1e-8, z)   # z→0 极限 = 0.1
+    zz = np.where(np.abs(z) < 1e-8, 1e-8, z)   # z→0 limit = 0.1
     out = 0.1 * zz / denom
     return np.where(np.isfinite(out), out, 0.0)
 
@@ -66,7 +68,7 @@ def beta_n(v):
 
 
 def gate_steady_state(v):
-    """各门控的稳态值（m∞, h∞, n∞）与时间常数。"""
+    """Steady-state values of each gate (m∞, h∞, n∞) and time constants."""
     v = np.asarray(v, dtype=float)
     a_m, b_m = alpha_m(v), beta_m(v)
     a_h, b_h = alpha_h(v), beta_h(v)
@@ -82,10 +84,10 @@ def gate_steady_state(v):
 
 
 # ---------------------------------------------------------------------------
-# HH 动力学
+# HH dynamics
 # ---------------------------------------------------------------------------
 class HodgkinHuxley:
-    """HH 模型封装。默认参数来自 config.HH_DEFAULTS。"""
+    """HH model wrapper. Default parameters come from config.HH_DEFAULTS."""
 
     def __init__(self, **kwargs):
         p = dict(config.HH_DEFAULTS)
@@ -99,7 +101,7 @@ class HodgkinHuxley:
         self.E_L = p["E_L"]
         self.V_rest = p["V_rest"]
 
-    # -- 门控动力学（供 integrate_ode 使用的向量场） -------------------
+    # -- gating dynamics (vector field for integrate_ode) -------------------
     def dvdt(self, v, m, h, n, i_ext):
         i_na = self.g_Na * m ** 3 * h * (v - self.E_Na)
         i_k = self.g_K * n ** 4 * (v - self.E_K)
@@ -119,25 +121,25 @@ class HodgkinHuxley:
         return np.array([self.V_rest, g["m_inf"], g["h_inf"], g["n_inf"]])
 
     def simulate(self, t_max, dt=None, i_ext_fn=None, v0=None, method="rk4"):
-        """模拟 HH 模型。
+        """Simulate the HH model.
 
         Parameters
         ----------
         t_max : float
-            仿真时长（ms）。
+            Simulation duration (ms).
         dt : float | None
-            时间步长。
+            Time step.
         i_ext_fn : callable | None
-            i_ext(t) 返回注入电流密度（µA/cm²）。
+            i_ext(t) returns the injected current density (µA/cm²).
         v0 : array_like | None
-            初值 [V, m, h, n]；None 用静息稳态。
+            Initial state [V, m, h, n]; None uses the resting steady state.
         method : str
-            "rk4" / "euler"。
+            "rk4" / "euler".
 
         Returns
         -------
         t : np.ndarray
-        y : np.ndarray (N, 4)，列为 V, m, h, n
+        y : np.ndarray (N, 4), columns are V, m, h, n
         """
         y0 = self.initial_state() if v0 is None else np.asarray(v0, dtype=float)
         t, y = integrate_ode(self.vector_field, y0, t_max, dt, method,
@@ -151,11 +153,11 @@ class HodgkinHuxley:
 
     def fI_curve(self, currents, t_max=120.0, dt=0.01, t_stim=(10.0, 110.0),
                  method="rk4"):
-        """不同注入电流下的发放率（Hz）。电流为恒定阶跃。
+        """Firing rate (Hz) under different injected currents. Currents are constant steps.
 
         Returns
         -------
-        (I, f) : 电流序列与发放率序列。
+        (I, f) : current sequence and firing-rate sequence.
         """
         I = np.asarray(currents, dtype=float)
         f = np.empty_like(I)
@@ -172,15 +174,18 @@ class HodgkinHuxley:
 
 def threshold_finder(hh, t_max=60.0, dt=0.01, amp_scan=(0.0, 12.0, 40),
                      pulse_ms=1.0, t_on=5.0, amp_tol=0.01):
-    """用脉冲电流扫描确定发放阈值（mV）。
+    """Determine the firing threshold (mV) by scanning with current pulses.
 
-    做法：在静息电位基础上给一个短促电流脉冲，二分搜索临界电流幅度
-    （恰好触发动作电位的注入电流），返回临界电流下亚阈值响应的
-    峰值膜电位，作为阈值电压估计。对经典 HH 参数应 ≈ −55 mV。
+    Method: starting from the resting potential, deliver a brief current pulse
+    and bisect the critical current amplitude (the injection that just triggers
+    an action potential); return the peak subthreshold membrane potential at the
+    critical current as an estimate of the threshold voltage. For classic HH
+    parameters it should be ≈ −55 mV.
 
     amp_tol : float
-        二分搜索的电流精度（mV）；防止过度逼近临界点导致
-        亚阈值峰值被 RK4 数值误差放大。
+        Current precision of the bisection (mV); prevents the subthreshold peak
+        from being amplified by RK4 numerical error when approaching the
+        critical point too closely.
     """
     lo, hi = amp_scan[0], amp_scan[1]
     v_peak_sub = None
@@ -204,7 +209,7 @@ def threshold_finder(hh, t_max=60.0, dt=0.01, amp_scan=(0.0, 12.0, 40),
 
 
 def step_current(amp, t_on=5.0, t_off=np.inf):
-    """构造阶跃电流函数 i_ext(t)，在 [t_on, t_off) 注入恒定 amp。"""
+    """Build a step-current function i_ext(t) injecting constant amp over [t_on, t_off)."""
 
     def fn(t):
         return amp if t_on <= t < t_off else 0.0

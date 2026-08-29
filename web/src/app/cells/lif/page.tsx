@@ -36,24 +36,26 @@ export default function LIFPage() {
 
   return (
     <article>
-      <ChapterHeading>§4 Leaky Integrate-and-Fire — 脉冲发放模型</ChapterHeading>
+      <ChapterHeading>§4 Leaky Integrate-and-Fire — Spiking Neuron Model</ChapterHeading>
 
       <FormulaBlock>
         τ · dV/dt = -(V - E<sub>L</sub>) + R · I<br />
-        当 V ≥ V<sub>thresh</sub> 时发放脉冲，V → V<sub>reset</sub>，不应期 t<sub>ref</sub>
+        When V ≥ V<sub>thresh</sub>, a spike is emitted, V → V<sub>reset</sub>, with refractory period t<sub>ref</sub>
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        LIF 模型是描述神经元脉冲发放的最简模型。膜电位指数衰减至静息电位，
-        外部电流驱动去极化。达到阈值时发放脉冲并重置。
-        f-I 曲线可解析求解，数值模拟与解析结果高度吻合。
+        The LIF model is the simplest model of neuronal spike generation. The membrane potential decays
+        exponentially toward the resting potential while external current drives depolarization.
+        When the threshold is reached, a spike is emitted and the potential resets.
+        The f-I curve can be solved analytically, and numerical simulations agree closely with the
+        analytical result.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="时长" value={duration} onChange={setDuration} unit="ms" min={100} max={2000} step={50} />
-        <ParamField label="输入电流" value={current} onChange={setCurrent} unit="nA" min={0} max={10} step={0.1} />
+      <ResultCard title="Parameters">
+        <ParamField label="Duration" value={duration} onChange={setDuration} unit="ms" min={100} max={2000} step={50} />
+        <ParamField label="Input current" value={current} onChange={setCurrent} unit="nA" min={0} max={10} step={0.1} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
@@ -61,26 +63,26 @@ export default function LIFPage() {
 
       {result && (
         <>
-          <ResultCard title="膜电位 V(t)">
-            <Waveform data={result.V} height={100} label={`V (mV), 发放 ${result.spikes.length} 次`} />
+          <ResultCard title="Membrane Potential V(t)">
+            <Waveform data={result.V} height={100} label={`V (mV), ${result.spikes.length} spikes`} />
           </ResultCard>
 
-          <ResultCard title="发放时间">
+          <ResultCard title="Spike Times">
             <DataTable
-              headers={['脉冲 #', '时间 (ms)']}
+              headers={['Spike #', 'Time (ms)']}
               rows={result.spikes.slice(0, 20).map((t, i) => [i + 1, t])}
             />
             {result.spikes.length > 20 && (
-              <p className="text-xs text-[var(--ink-light)] mt-1">... 共 {result.spikes.length} 个脉冲</p>
+              <p className="text-xs text-[var(--ink-light)] mt-1">... {result.spikes.length} spikes in total</p>
             )}
           </ResultCard>
         </>
       )}
 
       {fiData.length > 0 && (
-        <ResultCard title="f-I 曲线（解析 vs 数值）">
+        <ResultCard title="f-I Curve (Analytical vs Numerical)">
           <DataTable
-            headers={['I (nA)', 'f_解析 (Hz)', 'f_数值 (Hz)']}
+            headers={['I (nA)', 'f_analytical (Hz)', 'f_numerical (Hz)']}
             rows={fiData.filter((_, i) => i % 2 === 0).map(d => [d.I, d.freq_analytical, d.freq_numerical])}
           />
           <TextScatter
@@ -92,7 +94,7 @@ export default function LIFPage() {
       )}
 
       {raster.length > 0 && (
-        <ResultCard title="栅栏图（10 个神经元）">
+        <ResultCard title="Raster Plot (10 Neurons)">
           <TextScatter
             points={raster.map(s => ({ x: s.spikeTime, y: s.neuronIdx }))}
             width={50}

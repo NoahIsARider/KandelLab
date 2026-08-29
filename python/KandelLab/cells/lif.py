@@ -1,17 +1,19 @@
-"""漏电积分发放（Leaky Integrate-and-Fire, LIF）模型。
+"""Leaky Integrate-and-Fire (LIF) model.
 
-核心概念 #4：神经元以脉冲序列（频率编码）传递信息。
+Core concept #4: neurons transmit information as spike trains (rate coding).
 
-模型
-----
+Model
+-----
     τ_m · dV/dt = −(V − E_L) + R_m · I(t)
 
-V ≥ V_th 时发放一次并复位到 V_reset（含绝对不应期 τ_ref）。
+When V ≥ V_th the neuron fires and resets to V_reset (with absolute refractory
+period τ_ref).
 
-解析发放率（恒定电流 I，V∞ = E_L + R·I）：
+Analytic firing rate (constant current I, V∞ = E_L + R·I):
     f = 1 / (τ_ref + τ_m · ln((V∞ − V_reset) / (V∞ − V_th)))
 
-验证锚点：数值模拟的 f-I 曲线与解析公式逐点吻合。
+Verification anchor: the numerically simulated f-I curve matches the analytic
+formula point by point.
 """
 
 from __future__ import annotations
@@ -23,7 +25,7 @@ from ..utils.neuro import detect_spikes
 
 
 class LIF:
-    """LIF 神经元。默认参数来自 config.LIF_DEFAULTS。"""
+    """LIF neuron. Default parameters come from config.LIF_DEFAULTS."""
 
     def __init__(self, **kwargs):
         p = dict(config.LIF_DEFAULTS)
@@ -36,20 +38,20 @@ class LIF:
         self.V_peak = p["V_peak"]
         self.tau_ref = p["tau_ref"]
 
-    # -- 数值模拟 -------------------------------------------------------
+    # -- numerical simulation -------------------------------------------------------
     def simulate(self, I, t_max, dt=0.01, v0=None):
-        """恒定/时变电流下的仿真。
+        """Simulate under constant or time-varying current.
 
         Parameters
         ----------
         I : float | np.ndarray
-            恒定电流（nA）或与 t 对齐的电流序列。
+            Constant current (nA) or a current sequence aligned with t.
         t_max : float
-            时长（ms）。
+            Duration (ms).
         dt : float
-            步长（ms）。
+            Time step (ms).
         v0 : float | None
-            初始电位；None 用 E_L。
+            Initial potential; None uses E_L.
 
         Returns
         -------
@@ -84,9 +86,9 @@ class LIF:
                 ref_end = i + 1 + int(np.ceil(self.tau_ref / dt))
         return t, v, np.array(spike_times)
 
-    # -- 解析 -----------------------------------------------------------
+    # -- analytic -----------------------------------------------------------
     def analytical_rate(self, I):
-        """恒定电流下的解析发放率（Hz）。I 低于阈时返回 0。"""
+        """Analytic firing rate (Hz) under constant current. Returns 0 when I is subthreshold."""
         v_inf = self.E_L + self.R_m * float(I)
         if v_inf <= self.V_th:
             return 0.0
@@ -96,11 +98,11 @@ class LIF:
         return 1.0 / ((self.tau_ref + t_s) / 1000.0)
 
     def rheobase(self):
-        """基强度电流（nA）：恰好使 V∞ = V_th。"""
+        """Rheobase current (nA): the current that makes V∞ = V_th exactly."""
         return (self.V_th - self.E_L) / self.R_m
 
     def fI_curve(self, currents, t_max=1000.0, dt=0.01, burn_ms=100.0):
-        """数值 f-I 曲线（Hz），burn_ms 用于丢弃起始瞬态。"""
+        """Numerical f-I curve (Hz); burn_ms discards the initial transient."""
         I = np.asarray(currents, dtype=float)
         f_num = np.empty_like(I)
         for k, cur in enumerate(I):
@@ -113,9 +115,9 @@ class LIF:
 
 def raster_simulation(currents, n_trials=20, t_max=300.0, dt=0.01, seed=None,
                       **lif_kwargs):
-    """多次试验的栅栏图模拟：返回 {电流: spike_times 列表}。
+    """Multi-trial raster simulation: returns {current: list of spike_times}.
 
-    通过在每个 trial 添加微小高斯噪声模拟响应变异性。
+    Response variability is mimicked by adding small Gaussian noise to each trial.
     """
     from ..utils.neuro import rng
     r = rng(seed)

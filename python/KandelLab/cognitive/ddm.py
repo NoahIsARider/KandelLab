@@ -1,15 +1,16 @@
-"""漂移扩散模型（Drift-Diffusion Model, DDM）。
+"""Drift-Diffusion Model (DDM).
 
-核心概念 #12a：决策是证据累积到阈值的随机过程。
+Core concept #12a: decision-making is a stochastic process of evidence
+accumulation to a threshold.
 
-模型
-----
-    dx = μ·dt + σ·dW ，x 越过 +a → 选择 1（正确，若 μ>0）；
-                        x 越过 −a → 选择 2（错误）。
+Model
+-----
+    dx = μ·dt + σ·dW ，x crossing +a → choice 1 (correct if μ>0);
+                        x crossing −a → choice 2 (error).
 
-验证锚点：
-    漂移率 μ↑ → 正确率↑、反应时 RT↓；
-    边界 a↑ → 正确率↑、反应时 RT↑（速度-准确性权衡）。
+Verification anchors:
+    drift rate μ↑ → accuracy↑, response time RT↓;
+    boundary a↑ → accuracy↑, response time RT↑ (speed-accuracy tradeoff).
 """
 
 from __future__ import annotations
@@ -21,11 +22,11 @@ from .. import config
 
 def simulate_trial(mu, sigma, boundary=None, dt=None, T_max=None, x0=0.0,
                    seed=None):
-    """单次 DDM 决策。
+    """A single DDM decision.
 
     Returns
     -------
-    (rt, choice) : 反应时（s）与选择（+1/−1）；超时返回 (T_max, 0)。
+    (rt, choice) : response time (s) and choice (+1/−1); timeout returns (T_max, 0).
     """
     p = config.DDM_DEFAULTS
     boundary = p["boundary"] if boundary is None else boundary
@@ -45,7 +46,7 @@ def simulate_trial(mu, sigma, boundary=None, dt=None, T_max=None, x0=0.0,
 
 def simulate_experiment(mu, sigma, boundary=None, n_trials=1000, dt=None,
                         T_max=None, seed=None):
-    """多次试验：返回 (RT 数组, 选择数组, 正确率, 平均 RT)。"""
+    """Multiple trials: returns (RT array, choices array, accuracy, mean RT)."""
     p = config.DDM_DEFAULTS
     boundary = p["boundary"] if boundary is None else boundary
     dt = p["dt"] if dt is None else dt
@@ -63,7 +64,7 @@ def simulate_experiment(mu, sigma, boundary=None, n_trials=1000, dt=None,
 
 
 def speed_accuracy_tradeoff(mu, sigma, boundaries, n_trials=500, seed=0):
-    """扫描边界 a → (正确率, 平均 RT)。
+    """Scan boundary a → (accuracy, mean RT).
 
     Returns
     -------
@@ -78,7 +79,7 @@ def speed_accuracy_tradeoff(mu, sigma, boundaries, n_trials=500, seed=0):
 
 
 def drift_scan(mus, sigma, boundary=None, n_trials=500, seed=0):
-    """扫描漂移率 μ → (正确率, 平均 RT)。"""
+    """Scan drift rate μ → (accuracy, mean RT)."""
     p = config.DDM_DEFAULTS
     boundary = p["boundary"] if boundary is None else boundary
     accs, mrt = [], []

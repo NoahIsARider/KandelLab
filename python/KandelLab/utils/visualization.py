@@ -1,7 +1,8 @@
-"""KandelLab — NeuroVisualizer：统一的学术风图表生成器。
+"""KandelLab — NeuroVisualizer: a unified academic-style figure generator.
 
-所有图以 PNG 保存（教学场景不使用 SVG），采用仿羊皮纸的复古学术配色，
-衬线字体，去网格线、保边框，符合"学术场景严谨极简"风格。
+All figures are saved as PNG (SVG is not used in the teaching context), with a
+parchment-inspired vintage academic palette, serif fonts, no gridlines and
+preserved borders, consistent with a "rigorous and minimalist academic" style.
 """
 
 from __future__ import annotations
@@ -38,9 +39,9 @@ rcParams.update({
 _PARCHMENT = "#f4ead0"
 _INK = "#2a2018"
 _FADED = "#8a7a5c"
-_ACCENT1 = "#7a3b2e"   # 赭红（氧化铁）
-_ACCENT2 = "#3d5a3a"   # 墨绿
-_ACCENT3 = "#5a4a78"   # 靛青
+_ACCENT1 = "#7a3b2e"   # ochre red (iron oxide)
+_ACCENT2 = "#3d5a3a"   # ink green
+_ACCENT3 = "#5a4a78"   # indigo
 
 
 def _style_ax(ax, xlabel=None, ylabel=None, title=None):
@@ -67,7 +68,7 @@ def _save(fig, out_dir, name, fmt="png"):
 
 
 class NeuroVisualizer:
-    """所有绘图方法的统一入口；每个方法返回保存后的 PNG 路径。"""
+    """Unified entry point for all plotting methods; each method returns the saved PNG path."""
 
     def __init__(self, out_dir="output/figures"):
         self.out_dir = str(out_dir)
@@ -77,7 +78,7 @@ class NeuroVisualizer:
     # ------------------------------------------------------------------
     def membrane_potential(self, t, v, gNa=None, gK=None, out="membrane_potential",
                            legend_v="V (mV)"):
-        """膜电位波形（可选叠加 gNa/gK 电导）。"""
+        """Membrane potential waveform (optionally with gNa/gK conductances overlaid)."""
         fig, ax = plt.subplots(figsize=(7, 3.6))
         ax.plot(t, v, color=_ACCENT1, lw=1.4, label=legend_v)
         if gNa is not None:
@@ -89,7 +90,7 @@ class NeuroVisualizer:
         return _save(fig, self.out_dir, out)
 
     def raster(self, times_by_trial, out="raster"):
-        """LIF 栅栏图（多次试验叠加）。"""
+        """LIF raster plot (multiple trials overlaid)."""
         fig, ax = plt.subplots(figsize=(7, 3.2))
         for i, tt in enumerate(times_by_trial):
             ax.plot(tt, np.full_like(tt, i), color=_INK, marker="|", ms=3,
@@ -98,7 +99,7 @@ class NeuroVisualizer:
         return _save(fig, self.out_dir, out)
 
     def fi_curve(self, I, f, out="fi_curve"):
-        """f-I 曲线。"""
+        """f-I curve."""
         fig, ax = plt.subplots(figsize=(5.4, 3.6))
         ax.plot(I, f, color=_ACCENT2, lw=1.8)
         ax.scatter(I, f, s=14, color=_ACCENT2, zorder=3)
@@ -109,43 +110,43 @@ class NeuroVisualizer:
     # circuits
     # ------------------------------------------------------------------
     def dof_receptive_field(self, kernel2d, out="dof_receptive_field"):
-        """DOG 感受野热图。"""
+        """DOG receptive-field heatmap."""
         fig, ax = plt.subplots(figsize=(4.4, 4.0))
         im = ax.imshow(kernel2d, cmap="RdBu_r", interpolation="nearest")
         ax.set_xticks([]); ax.set_yticks([])
         fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-        _style_ax(ax, None, None, "DOG 感受野")
+        _style_ax(ax, None, None, "DOG receptive field")
         return _save(fig, self.out_dir, out)
 
     def edge_enhancement(self, original, processed, out="edge_enhancement"):
-        """边缘增强对比（原图 / 侧抑制后）。"""
+        """Edge-enhancement comparison (original / after lateral inhibition)."""
         fig, axes = plt.subplots(1, 2, figsize=(7.4, 3.4))
         for ax, img, title in zip(axes, (original, processed),
-                                  ("原始亮度", "侧抑制输出")):
+                                  ("Original luminance", "Lateral-inhibited output")):
             ax.imshow(img, cmap="gray", interpolation="nearest")
             ax.set_title(title)
             ax.set_xticks([]); ax.set_yticks([])
         return _save(fig, self.out_dir, out)
 
     def wc_phase_portrait(self, E, I, nullE, nullI, out="wc_phase_portrait"):
-        """Wilson-Cowan 相图（零等斜线 + 采样轨迹）。"""
+        """Wilson-Cowan phase portrait (nullclines + sampled trajectories)."""
         fig, ax = plt.subplots(figsize=(5.4, 5.0))
         ax.plot(E, nullE, color=_ACCENT1, lw=1.8, label="E nullcline")
         ax.plot(nullI, I, color=_ACCENT2, lw=1.8, label="I nullcline")
         ax.plot(E, I, color=_INK, lw=0.8, alpha=0.7, ls="--", label="trajectory")
-        _style_ax(ax, "E", "I", "Wilson-Cowan 相平面")
+        _style_ax(ax, "E", "I", "Wilson-Cowan phase plane")
         ax.legend(frameon=False, loc="best")
         return _save(fig, self.out_dir, out)
 
     def kuramoto_transition(self, K, R, out="kuramoto_transition"):
-        """Kuramoto 序参量 R(K) 相变曲线。"""
+        """Kuramoto order-parameter R(K) phase-transition curve."""
         fig, ax = plt.subplots(figsize=(5.4, 3.6))
         ax.plot(K, R, color=_ACCENT3, lw=1.8)
-        _style_ax(ax, "耦合强度 K", "序参量 R")
+        _style_ax(ax, "Coupling strength K", "Order parameter R")
         return _save(fig, self.out_dir, out)
 
     def kuramoto_snapshots(self, thetas_by_K, out="kuramoto_snapshots"):
-        """不同耦合强度下的相位分布（极坐标快照）。"""
+        """Phase distributions at different coupling strengths (polar snapshots)."""
         n = len(thetas_by_K)
         fig, axes = plt.subplots(1, n, figsize=(2.4 * n, 2.2),
                                  subplot_kw={"projection": "polar"})
@@ -161,7 +162,7 @@ class NeuroVisualizer:
     # systems
     # ------------------------------------------------------------------
     def gabor_bank(self, gabors, out="gabor_bank"):
-        """Gabor 滤波器组网格图。"""
+        """Gabor filter bank grid plot."""
         n = len(gabors)
         cols = min(6, n)
         rows = int(np.ceil(n / cols))
@@ -175,95 +176,95 @@ class NeuroVisualizer:
         return _save(fig, self.out_dir, out)
 
     def tuning_curve(self, angles, response, out="tuning_curve"):
-        """方位调谐曲线（极坐标 + 直角坐标）。"""
+        """Orientation tuning curve (polar + Cartesian)."""
         fig, (axp, axc) = plt.subplots(1, 2, figsize=(7.6, 3.4),
                                        subplot_kw=dict(projection="polar",
                                                        polar=True))
         axp.plot(angles, response, color=_ACCENT1, lw=1.6)
         axp.fill(angles, response, color=_ACCENT1, alpha=0.2)
         axp.set_ylim(0, max(response) * 1.15)
-        _style_ax(axc, "角度 (°)", "响应")
+        _style_ax(axc, "Angle (°)", "Response")
         axc.plot(np.degrees(angles), response, color=_ACCENT2, lw=1.6)
         return _save(fig, self.out_dir, out)
 
     def tonotopy(self, freqs, response, out="tonotopy"):
-        """听觉频率调谐曲线（tonotopy 单调排列）。"""
+        """Auditory frequency tuning curve (monotonic tonotopy arrangement)."""
         fig, ax = plt.subplots(figsize=(5.6, 3.6))
         ax.semilogx(freqs, response, color=_ACCENT3, lw=1.8, marker="o", ms=3)
-        _style_ax(ax, "频率 (Hz)", "响应")
+        _style_ax(ax, "Frequency (Hz)", "Response")
         return _save(fig, self.out_dir, out)
 
     def adaptation_curve(self, trial, gain, target=None, out="adaptation_curve"):
-        """VOR 增益适应曲线。"""
+        """VOR gain adaptation curve."""
         fig, ax = plt.subplots(figsize=(5.6, 3.4))
         ax.plot(trial, gain, color=_ACCENT2, lw=1.8)
         if target is not None:
             ax.axhline(target, color=_FADED, ls="--", lw=1.0,
-                       label=f"目标 {target}")
-        _style_ax(ax, "trial", "增益 g")
+                       label=f"target {target}")
+        _style_ax(ax, "trial", "gain g")
         ax.legend(frameon=False)
         return _save(fig, self.out_dir, out)
 
     def memory_recall(self, original, corrupted, recovered, out="memory_recall"):
-        """Hopfield 联想记忆恢复（原模式/损坏/恢复）。"""
+        """Hopfield associative memory retrieval (original / corrupted / recovered)."""
         fig, axes = plt.subplots(1, 3, figsize=(7.8, 2.9))
         for ax, img, title in zip(axes, (original, corrupted, recovered),
-                                  ("存储模式", "损坏输入", "恢复结果")):
+                                  ("Stored pattern", "Corrupted input", "Recovered")):
             ax.imshow(img, cmap="binary", interpolation="nearest")
             ax.set_title(title)
             ax.set_xticks([]); ax.set_yticks([])
         return _save(fig, self.out_dir, out)
 
     def hopfield_energy(self, energy, out="hopfield_energy"):
-        """Hopfield 能量下降曲线。"""
+        """Hopfield energy descent curve."""
         fig, ax = plt.subplots(figsize=(5.4, 3.4))
         ax.plot(energy, color=_ACCENT3, lw=1.6)
-        _style_ax(ax, "异步更新步", "能量 E")
+        _style_ax(ax, "Asynchronous update step", "Energy E")
         return _save(fig, self.out_dir, out)
 
     def rw_learning(self, trials, V, block2=None, out="rw_learning"):
-        """Rescorla-Wagner 学习曲线（可含阻塞期）。"""
+        """Rescorla-Wagner learning curve (optionally showing the blocking phase)."""
         fig, ax = plt.subplots(figsize=(6.2, 3.6))
         ax.plot(trials, V, color=_ACCENT1, lw=1.6)
         if block2 is not None:
             for start in block2:
                 ax.axvline(start, color=_FADED, ls="--", lw=0.9)
-        _style_ax(ax, "试验次数", "预期值 V")
+        _style_ax(ax, "Trial", "Expected value V")
         return _save(fig, self.out_dir, out)
 
     def td_error(self, trial, delta, out="td_error"):
-        """TD 预测误差（多巴胺样信号）。"""
+        """TD prediction error (dopamine-like signal)."""
         fig, ax = plt.subplots(figsize=(6.2, 3.4))
         ax.plot(trial, delta, color=_ACCENT2, lw=1.4)
         ax.axhline(0, color=_FADED, lw=0.8, ls=":")
-        _style_ax(ax, "时间", "δ")
+        _style_ax(ax, "Time", "δ")
         return _save(fig, self.out_dir, out)
 
     def ddm_trajectories(self, t, x, boundary=None, out="ddm_trajectories"):
-        """DDM 决策轨迹。"""
+        """DDM decision trajectories."""
         fig, ax = plt.subplots(figsize=(6.4, 3.8))
         for i in range(min(x.shape[0], 15)):
             ax.plot(t, x[i], color=_ACCENT1, lw=0.8, alpha=0.8)
         if boundary is not None:
             ax.axhline(boundary, color=_FADED, ls="--", lw=0.9)
             ax.axhline(-boundary, color=_FADED, ls="--", lw=0.9)
-        _style_ax(ax, "t (s)", "累积证据 x")
+        _style_ax(ax, "t (s)", "Accumulated evidence x")
         return _save(fig, self.out_dir, out)
 
     def rt_histogram(self, rt_correct, rt_error=None, out="rt_histogram"):
-        """RT 分布直方图。"""
+        """RT distribution histogram."""
         fig, ax = plt.subplots(figsize=(5.6, 3.4))
         if len(rt_correct) > 0:
             ax.hist(rt_correct, bins=30, color=_ACCENT2, alpha=0.75,
                     label="correct")
         if rt_error is not None and len(rt_error) > 0:
             ax.hist(rt_error, bins=30, color=_ACCENT1, alpha=0.65, label="error")
-        _style_ax(ax, "RT (s)", "频数")
+        _style_ax(ax, "RT (s)", "Count")
         ax.legend(frameon=False)
         return _save(fig, self.out_dir, out)
 
     def roc(self, fpr, tpr, auc=None, out="roc_curve"):
-        """ROC 曲线。"""
+        """ROC curve."""
         fig, ax = plt.subplots(figsize=(4.6, 4.4))
         ax.plot(fpr, tpr, color=_ACCENT3, lw=1.8)
         ax.plot([0, 1], [0, 1], color=_FADED, ls="--", lw=0.9)
@@ -271,14 +272,14 @@ class NeuroVisualizer:
         title = "ROC"
         if auc is not None:
             title += f" (AUC={auc:.3f})"
-        _style_ax(ax, "假阳性率", "真阳性率", title)
+        _style_ax(ax, "False-positive rate", "True-positive rate", title)
         return _save(fig, self.out_dir, out)
 
     def fisher_analysis(self, noise, fisher, var, out="fisher_analysis"):
-        """Fisher 信息与解码方差对比（Cramér-Rao）。"""
+        """Fisher information vs decoding variance comparison (Cramér-Rao)."""
         fig, ax = plt.subplots(figsize=(5.8, 3.6))
-        ax.plot(noise, fisher, color=_ACCENT1, lw=1.6, label="Fisher 信息")
-        ax.plot(noise, var, color=_ACCENT2, lw=1.6, ls="--", label="解码方差")
-        _style_ax(ax, "噪声水平", "值")
+        ax.plot(noise, fisher, color=_ACCENT1, lw=1.6, label="Fisher information")
+        ax.plot(noise, var, color=_ACCENT2, lw=1.6, ls="--", label="Decoding variance")
+        _style_ax(ax, "Noise level", "Value")
         ax.legend(frameon=False)
         return _save(fig, self.out_dir, out)

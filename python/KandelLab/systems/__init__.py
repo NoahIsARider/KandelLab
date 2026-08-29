@@ -1,8 +1,8 @@
-"""systems — 系统层：感觉、运动、记忆与奖赏。
+"""systems — system layer: sensation, movement, memory and reward.
 
-vision     视觉方位调谐（Gabor）
-audition   听觉频率调谐（γ-tone）
-motor      VOR 小脑适应
-memory     Hopfield 联想记忆
-reward     RW / TD 奖赏学习
+vision     visual orientation tuning (Gabor)
+audition   auditory frequency tuning (γ-tone)
+motor      VOR cerebellar adaptation
+memory     Hopfield associative memory
+reward     RW / TD reward learning
 """

@@ -33,30 +33,31 @@ export default function VisionPage() {
 
   return (
     <article>
-      <ChapterHeading>§10a 视觉系统 — Gabor 滤波器与方位调谐</ChapterHeading>
+      <ChapterHeading>§10a Visual System — Gabor Filters and Orientation Tuning</ChapterHeading>
 
       <FormulaBlock>
         G(x,y) = exp(-(x&apos;² + γ²y&apos;²)/(2σ²)) · cos(2πx&apos;/λ + ψ)
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        V1 简单细胞的感受野可用 2D Gabor 函数描述：高斯包络调制正弦波。
-        不同细胞偏好不同朝向，形成方位调谐曲线。
+        The receptive fields of V1 simple cells can be described by a 2D Gabor function: a sinusoidal
+        wave modulated by a Gaussian envelope. Different cells prefer different orientations,
+        giving rise to orientation tuning curves.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="最优朝向 θ" value={preferredAngle} onChange={setPreferredAngle} unit="rad" min={0} max={3.14} step={0.1} />
-        <ParamField label="σ (包络)" value={sigma} onChange={setSigma} min={1} max={10} step={0.5} />
-        <ParamField label="λ (波长)" value={lambda} onChange={setLambda} min={4} max={20} step={1} />
+      <ResultCard title="Parameters">
+        <ParamField label="Preferred orientation θ" value={preferredAngle} onChange={setPreferredAngle} unit="rad" min={0} max={3.14} step={0.1} />
+        <ParamField label="σ (envelope)" value={sigma} onChange={setSigma} min={1} max={10} step={0.5} />
+        <ParamField label="λ (wavelength)" value={lambda} onChange={setLambda} min={4} max={20} step={1} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
       </ResultCard>
 
       {rfData && (
-        <ResultCard title="感受野热图 (Gabor 核)">
+        <ResultCard title="Receptive Field Heatmap (Gabor Kernel)">
           <div style={{ width: '280px', margin: '0 auto' }}>
             <HeatMap data={rfData.data} colorScheme="diverging" />
           </div>
@@ -67,7 +68,7 @@ export default function VisionPage() {
       )}
 
       {result && (
-        <ResultCard title="方位调谐曲线">
+        <ResultCard title="Orientation Tuning Curve">
           <BarChart
             data={result.tuningCurve.map(d => ({
               label: `${(d.angle * 180 / Math.PI).toFixed(0)}°`,
@@ -75,7 +76,7 @@ export default function VisionPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            最优朝向处响应最大，偏离时响应下降（调谐半宽 ≈ σ_angular）
+            Response is maximal at the preferred orientation and falls off with deviation (tuning half-width ≈ σ_angular)
           </p>
         </ResultCard>
       )}

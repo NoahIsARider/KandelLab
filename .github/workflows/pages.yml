@@ -1,0 +1,58 @@
+name: pages
+
+# Build the Next.js app as a static export and deploy it to GitHub Pages.
+# URL: https://noahisarider.github.io/KandelLab/
+#
+# One-time setup: repo Settings → Pages → Build and deployment → Source: GitHub Actions
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/configure-pages@v5
+
+      - name: Install & build static export
+        working-directory: web
+        env:
+          GITHUB_PAGES: 'true'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          # next.config assetPrefix: './' not needed; basePath handles /KandelLab/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

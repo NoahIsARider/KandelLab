@@ -1,18 +1,20 @@
-"""Wilson–Cowan 兴奋-抑制群体动力学。
+"""Wilson–Cowan excitatory-inhibitory population dynamics.
 
-核心概念 #8：皮层兴奋-抑制平衡维持网络稳定。
+Core concept #8: cortical excitation-inhibition balance maintains network stability.
 
-模型（双群体 ODE）
+Model (two-population ODE)
 ------------------
     τ_E · dE/dt = −E + S(w_EE·E − w_EI·I + P_E − θ_E)
     τ_I · dI/dt = −I + S(w_IE·E − w_II·I + P_I − θ_I)
 
-其中 S(x) = 1/(1+exp(−x)) 为群体发放率 sigmoid，
-w_xy 为群体间连接强度，P 为外部输入，θ 为发放阈值。
+where S(x) = 1/(1+exp(−x)) is the population firing-rate sigmoid,
+w_xy the inter-population connection strength, P the external input,
+and θ the firing threshold.
 
-验证锚点：
-    静息态不动点存在且 Jacobian 特征值实部为负（稳定）；
-    强输入可把系统推到高活动（双稳态）不动点。
+Verification anchors:
+    a rest fixed point exists and the Jacobian eigenvalues have negative real
+    parts (stable);
+    strong input can push the system to a high-activity (bistable) fixed point.
 """
 
 from __future__ import annotations
@@ -24,7 +26,7 @@ from ..utils.neuro import sigmoid, integrate_ode
 
 
 class WilsonCowan:
-    """Wilson-Cowan 双群体模型。默认参数来自 config。"""
+    """Wilson-Cowan two-population model. Default parameters come from config."""
 
     def __init__(self, **kwargs):
         p = dict(config.WILSON_COWAN_DEFAULTS)
@@ -39,11 +41,11 @@ class WilsonCowan:
         self.theta_I = p["theta_I"]
 
     def transfer(self, z):
-        """sigmoid 转移函数 S(z)。"""
+        """Sigmoid transfer function S(z)."""
         return sigmoid(z, gain=1.0, threshold=0.0)
 
     def rates(self, E, I, P_E=0.0, P_I=0.0):
-        """由活动 (E, I) 与外部输入计算驱动量并返回 (dE/dt, dI/dt)。"""
+        """Compute the drives from activities (E, I) and external input, returning (dE/dt, dI/dt)."""
         E = np.asarray(E, dtype=float)
         I = np.asarray(I, dtype=float)
         drive_E = self.w_EE * E - self.w_EI * I + P_E - self.theta_E
@@ -57,18 +59,18 @@ class WilsonCowan:
 
     def simulate(self, t_max, dt=0.1, E0=0.05, I0=0.05, P_E=0.0, P_I=0.0,
                  method="euler"):
-        """从初值积分相轨迹。返回 (t, E, I)。"""
+        """Integrate the phase trajectory from initial values. Returns (t, E, I)."""
         t, y = integrate_ode(self.vector_field, [E0, I0], t_max, dt, method,
                              P_E=P_E, P_I=P_I)
         return t, y[:, 0], y[:, 1]
 
-    # -- 不动点与稳定性 -------------------------------------------------
+    # -- fixed points and stability -------------------------------------------
     def _e_nullcline_I(self, E, P_E, P_I):
-        """E-nullcline 上给定 E 对应的 I（闭式解）。
+        """I on the E-nullcline for a given E (closed-form solution).
 
         E = S(w_EE·E − w_EI·I + P_E − θ_E)
         => I = (w_EE·E + P_E − θ_E − S⁻¹(E)) / w_EI
-        S⁻¹(E) = ln(E/(1−E))，仅在 0 < E < 1 有定义。
+        S⁻¹(E) = ln(E/(1−E)), defined only for 0 < E < 1.
         """
         E = float(E)
         if E <= 0.0 or E >= 1.0:
@@ -77,7 +79,7 @@ class WilsonCowan:
                 - np.log(E / (1.0 - E))) / self.w_EI
 
     def _i_nullcline_I(self, E, P_E, P_I):
-        """I-nullcline 上给定 E 对应的 I（单调方程，二分求解）。
+        """I on the I-nullcline for a given E (monotonic equation, solved by bisection).
 
         I = S(w_IE·E − w_II·I + P_I − θ_I)
         """
@@ -87,11 +89,11 @@ class WilsonCowan:
         return _bisect(g, 0.0, 1.5)
 
     def fixed_points(self, P_E=0.0, P_I=0.0, grid=400):
-        """数值搜索不动点（零等斜线交点）。
+        """Numerically search for fixed points (intersections of the nullclines).
 
         Returns
         -------
-        list[(E, I)] : 不动点列表。
+        list[(E, I)] : list of fixed points.
         """
         eps = 1e-4
         E_grid = np.linspace(eps, 1.0 - eps, grid)
@@ -113,14 +115,14 @@ class WilsonCowan:
         return fpts
 
     def _solve_E_nullcline(self, E, P_E, P_I):
-        """E-nullcline 上给定 E 的 I（兼容旧接口，闭式解）。"""
+        """I on the E-nullcline for a given E (legacy interface, closed-form solution)."""
         return self._e_nullcline_I(E, P_E, P_I)
 
     def jacobian(self, E, I, P_E=0.0, P_I=0.0):
-        """不动点处 Jacobian（关于 E, I）。"""
+        """Jacobian at a fixed point (with respect to E, I)."""
         sE = self.transfer(self.w_EE * E - self.w_EI * I + P_E - self.theta_E)
         sI = self.transfer(self.w_IE * E - self.w_II * I + P_I - self.theta_I)
-        # sigmoid 导数 S'(z) = S(1−S)
+        # sigmoid derivative S'(z) = S(1−S)
         J = np.array([
             [(self.w_EE * sE * (1 - sE) - 1) / self.tau_E,
              (-self.w_EI * sE * (1 - sE)) / self.tau_E],
@@ -130,12 +132,12 @@ class WilsonCowan:
         return J
 
     def is_stable(self, E, I, P_E=0.0, P_I=0.0):
-        """判断不动点是否线性稳定（Jacobian 实部全为负）。"""
+        """Check whether a fixed point is linearly stable (all Jacobian real parts negative)."""
         eig = np.linalg.eigvals(self.jacobian(E, I, P_E, P_I))
         return bool(np.all(eig.real < 0))
 
     def nullclines(self, P_E=0.0, P_I=0.0, grid=300):
-        """返回零等斜线数组 (E_grid, nullE, nullI)。"""
+        """Return the nullcline arrays (E_grid, nullE, nullI)."""
         eps = 1e-4
         E_grid = np.linspace(eps, 1.0 - eps, grid)
         nullE = np.array([self._e_nullcline_I(E, P_E, P_I) for E in E_grid])
@@ -144,7 +146,7 @@ class WilsonCowan:
 
 
 def _bisect(f, lo, hi, tol=1e-8, max_iter=200):
-    """单变量零点搜索（假设 f 单调跨零）。"""
+    """One-dimensional root search (assumes f is monotonic and crosses zero)."""
     f_lo, f_hi = f(lo), f(hi)
     if f_lo * f_hi > 0:
         return np.nan

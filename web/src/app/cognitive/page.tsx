@@ -4,11 +4,12 @@ import { ChapterHeading, OrnamentDivider } from '@/components/simulation-ui';
 export default function CognitivePage() {
   return (
     <article>
-      <ChapterHeading>IV. 认知层 · Cognitive</ChapterHeading>
+      <ChapterHeading>IV. Cognitive Level · Cognition</ChapterHeading>
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        认知层探讨决策、感知与编码的计算机制。漂移扩散模型将决策描述为
-        证据累积过程，信号检测论量化感知敏感性，群体编码理论则揭示
-        神经系统如何以群体活动精确表征外部刺激。
+        The cognitive level explores the computational mechanisms of decision-making, perception, and
+        coding. The drift-diffusion model describes decisions as evidence accumulation; signal detection
+        theory quantifies perceptual sensitivity; population coding theory reveals how the nervous
+        system represents external stimuli precisely through population activity.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
@@ -16,24 +17,24 @@ export default function CognitivePage() {
       <div className="space-y-4">
         <ModuleCard
           number="13"
-          title="漂移扩散模型"
-          subtitle="DDM — 决策的证据累积"
+          title="Drift-Diffusion Model"
+          subtitle="DDM — Evidence Accumulation in Decision-Making"
           href="/cognitive/ddm"
-          desc="dx = μ·dt + σ·dW，边界 ±a 吸收。漂移率↑则正确率↑RT↓；边界↑则正确率↑RT↑。"
+          desc="dx = μ·dt + σ·dW with absorbing boundaries ±a. Higher drift → higher accuracy and faster RT; wider boundary → higher accuracy but slower RT."
         />
         <ModuleCard
           number="14"
-          title="信号检测论"
-          subtitle="SDT — d&apos;、判断标准与 ROC"
+          title="Signal Detection Theory"
+          subtitle="SDT — d&apos;, Criterion, and ROC"
           href="/cognitive/sdt"
-          desc="d&apos; = z(H) - z(FA)。分离敏感性与反应偏差。ROC 曲线下面积 AUC = Φ(d&apos;/√2)。"
+          desc="d&apos; = z(H) - z(FA) separates sensitivity from response bias. The area under the ROC curve is AUC = Φ(d&apos;/√2)."
         />
         <ModuleCard
           number="15"
-          title="群体编码"
-          subtitle="调谐曲线、Fisher 信息与 Cramér-Rao 界"
+          title="Population Coding"
+          subtitle="Tuning Curves, Fisher Information, and the Cramér–Rao Bound"
           href="/cognitive/encoding"
-          desc="调谐曲线（高斯/von Mises）描述单个神经元对刺激的偏好。Fisher 信息量化编码精度。"
+          desc="Tuning curves (Gaussian/von Mises) describe each neuron's preference for a stimulus. Fisher information quantifies coding precision."
         />
       </div>
     </article>

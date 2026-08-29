@@ -1,7 +1,7 @@
-"""circuits — 回路层：多神经元相互作用。
+"""circuits — circuit layer: interactions among multiple neurons.
 
-hebbian               Hebb 规则 / BCM
-lateral_inhibition    DOG 侧抑制
-wilson_cowan          兴奋-抑制群体动力学
-kuramoto              相位同步
+hebbian               Hebb rule / BCM
+lateral_inhibition    DOG lateral inhibition
+wilson_cowan          excitatory-inhibitory population dynamics
+kuramoto              phase synchronization
 """

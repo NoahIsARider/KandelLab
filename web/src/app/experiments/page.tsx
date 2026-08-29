@@ -4,10 +4,11 @@ import { ChapterHeading, OrnamentDivider } from '@/components/simulation-ui';
 export default function ExperimentsPage() {
   return (
     <article>
-      <ChapterHeading>十二大经典实验</ChapterHeading>
+      <ChapterHeading>Twelve Classic Experiments</ChapterHeading>
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        每个实验对应一个核心神经科学概念。修改参数 → 运行仿真 → 观察结果 → 分析回答。
-        所有实验均可在浏览器中实时运算。
+        Each experiment corresponds to a core neuroscience concept. Adjust parameters → run the
+        simulation → observe results → analyze and answer. All experiments run in real time in
+        your browser.
       </p>
 
       <OrnamentDivider symbol="❧ ※ ❧" />
@@ -15,87 +16,87 @@ export default function ExperimentsPage() {
       <div className="space-y-3">
         <ExperimentCard
           num={1}
-          title="静息电位的离子基础"
-          desc="扫描 [K⁺]₀ 对 V_rest 的影响，验证 Nernst 预测"
+          title="Ionic Basis of the Resting Potential"
+          desc="Sweep [K⁺]₀ and observe its effect on V_rest, testing the Nernst prediction"
           href="/cells/nernst"
-          layer="细胞"
+          layer="Cells"
         />
         <ExperimentCard
           num={2}
-          title="动作电位的产生"
-          desc="刺激强度 → 阈值/全或无/不应期（HH 模型）"
+          title="Generation of the Action Potential"
+          desc="Stimulus strength → threshold, all-or-none behavior, and refractoriness (HH model)"
           href="/cells/hodgkin-huxley"
-          layer="细胞"
+          layer="Cells"
         />
         <ExperimentCard
           num={3}
-          title="频率编码"
-          desc="LIF：输入电流 → f-I 曲线 → 栅栏图"
+          title="Rate Coding"
+          desc="LIF: input current → f-I curve → raster plot"
           href="/cells/lif"
-          layer="细胞"
+          layer="Cells"
         />
         <ExperimentCard
           num={4}
-          title="突触时空整合"
-          desc="频率 × 数量 → 发放概率"
+          title="Spatiotemporal Synaptic Integration"
+          desc="Frequency × number of inputs → firing probability"
           href="/cells/synapse"
-          layer="细胞"
+          layer="Cells"
         />
         <ExperimentCard
           num={5}
-          title="Hebbian 学习"
-          desc="相关输入训练 → 选择性强化"
+          title="Hebbian Learning"
+          desc="Training with correlated input → selective strengthening"
           href="/circuits/hebbian"
-          layer="回路"
+          layer="Circuits"
         />
         <ExperimentCard
           num={6}
-          title="侧抑制与边缘增强"
-          desc="DOG 核 → Mach band 效应"
+          title="Lateral Inhibition and Edge Enhancement"
+          desc="DOG kernel → Mach band effect"
           href="/circuits/lateral-inhibition"
-          layer="回路"
+          layer="Circuits"
         />
         <ExperimentCard
           num={7}
-          title="兴奋-抑制平衡"
-          desc="Wilson-Cowan：输入强度 → 单稳态/双稳态"
+          title="Excitation–Inhibition Balance"
+          desc="Wilson–Cowan: input strength → monostability/bistability"
           href="/circuits/wilson-cowan"
-          layer="回路"
+          layer="Circuits"
         />
         <ExperimentCard
           num={8}
-          title="神经振荡同步"
-          desc="Kuramoto：耦合强度 → 相变"
+          title="Neural Oscillation and Synchronization"
+          desc="Kuramoto: coupling strength → phase transition"
           href="/circuits/kuramoto"
-          layer="回路"
+          layer="Circuits"
         />
         <ExperimentCard
           num={9}
-          title="视觉方位选择性"
-          desc="Gabor 调谐曲线"
+          title="Visual Orientation Selectivity"
+          desc="Gabor tuning curve"
           href="/systems/vision"
-          layer="系统"
+          layer="Systems"
         />
         <ExperimentCard
           num={10}
-          title="联想记忆"
-          desc="Hopfield：损坏模式恢复过程"
+          title="Associative Memory"
+          desc="Hopfield: retrieval of corrupted patterns"
           href="/systems/memory"
-          layer="系统"
+          layer="Systems"
         />
         <ExperimentCard
           num={11}
-          title="奖赏学习"
-          desc="RW/TD：条件反射 + 阻塞效应"
+          title="Reward Learning"
+          desc="RW/TD: conditioning + blocking effect"
           href="/systems/reward"
-          layer="系统"
+          layer="Systems"
         />
         <ExperimentCard
           num={12}
-          title="知觉决策"
-          desc="DDM：正确率-RT 权衡 + ROC"
+          title="Perceptual Decision-Making"
+          desc="DDM: accuracy–RT trade-off + ROC"
           href="/cognitive/ddm"
-          layer="认知"
+          layer="Cognition"
         />
       </div>
     </article>

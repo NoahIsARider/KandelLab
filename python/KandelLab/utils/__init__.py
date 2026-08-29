@@ -1,1 +1,1 @@
-"""utils — 数值积分、可视化与输出工具。"""
+"""utils — numerical integration, visualization and output tools."""

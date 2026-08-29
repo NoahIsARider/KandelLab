@@ -35,7 +35,7 @@ export default function AuditionPage() {
 
   return (
     <article>
-      <ChapterHeading>§10b 听觉系统 — 频率调谐与耳蜗拓扑</ChapterHeading>
+      <ChapterHeading>§10b Auditory System — Frequency Tuning and Cochlear Tonotopy</ChapterHeading>
 
       <FormulaBlock>
         h(t) = t<sup>n-1</sup> · exp(-2π·bw·t) · cos(2π·cf·t)<br />
@@ -43,16 +43,17 @@ export default function AuditionPage() {
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        耳蜗基底膜按频率拓扑排列（tonotopy）：高频在基底，低频在顶端。
-        γ-tone 滤波器组模拟这一频率分析过程。每个神经元有其特征频率（CF），
-        在 CF 处响应最大，偏离时响应下降。
+        The cochlear basilar membrane is organized tonotopically: high frequencies at the base,
+        low frequencies at the apex. A γ-tone filter bank simulates this frequency analysis.
+        Each neuron has a characteristic frequency (CF) at which its response is maximal,
+        falling off as frequency deviates from the CF.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="特征频率 CF" value={cf} onChange={setCf} unit="Hz" min={100} max={8000} step={100} />
-        <ParamField label="神经元数" value={nNeurons} onChange={setNNeurons} min={3} max={20} step={1} />
+      <ResultCard title="Parameters">
+        <ParamField label="Characteristic frequency CF" value={cf} onChange={setCf} unit="Hz" min={100} max={8000} step={100} />
+        <ParamField label="Number of neurons" value={nNeurons} onChange={setNNeurons} min={3} max={20} step={1} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
@@ -60,7 +61,7 @@ export default function AuditionPage() {
 
       {result && (
         <>
-          <ResultCard title="频率调谐曲线">
+          <ResultCard title="Frequency Tuning Curve">
             <BarChart
               data={result.tuning.filter((_, i) => i % 2 === 0).map(d => ({
                 label: `${d.freq.toFixed(0)}`,
@@ -68,23 +69,23 @@ export default function AuditionPage() {
               }))}
             />
             <p className="text-xs text-[var(--ink-light)] mt-2">
-              CF = {cf} Hz 处响应最大（频率单位: Hz）
+              Response maximal at CF = {cf} Hz (frequency in Hz)
             </p>
           </ResultCard>
 
-          <ResultCard title="耳蜗拓扑图 (Tonotopy)">
+          <ResultCard title="Cochlear Tonotopy Map">
             <DataTable
-              headers={['位置 (相对)', '特征频率 (Hz)']}
+              headers={['Position (relative)', 'Characteristic frequency (Hz)']}
               rows={result.tonotopy.map(t => [t.position.toFixed(2), t.cf.toFixed(0)])}
             />
             <p className="text-xs text-[var(--ink-light)] mt-2">
-              位置 0 = 基底（高频）→ 位置 1 = 顶端（低频）
+              Position 0 = base (high frequencies) → position 1 = apex (low frequencies)
             </p>
           </ResultCard>
 
-          <ResultCard title="群体调谐">
+          <ResultCard title="Population Tuning">
             <DataTable
-              headers={['神经元', 'CF (Hz)', '最优响应频率']}
+              headers={['Neuron', 'CF (Hz)', 'Best frequency']}
               rows={result.population.neurons.map((n, i) => [
                 i + 1,
                 n.cf.toFixed(0),

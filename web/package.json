@@ -63,6 +63,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -79,7 +80,7 @@
   "engines": {
     "pnpm": ">=9.0.0"
   },
-  "description": "Neuroscience Principles Code Lab \u2014 implement Kandel's Principles of Neural Science models in TypeScript. Pure, browser-safe simulation engine.",
+  "description": "Neuroscience Principles Code Lab — implement Kandel's Principles of Neural Science models in TypeScript. Pure, browser-safe simulation engine.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

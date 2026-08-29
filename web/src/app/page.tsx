@@ -6,69 +6,70 @@ export default function HomePage() {
       <section className="mb-8">
         <p className="text-base leading-relaxed text-[var(--ink)] mb-4">
           <span className="font-[var(--font-display)] text-2xl text-[var(--oxide)]">K</span>
-          andelLab 是一个神经科学原理仿真系统——将 Eric Kandel 经典教材{' '}
+          andelLab is a simulation system for the principles of neuroscience — implementing the core models of Eric Kandel's classic textbook{' '}
           <em>Principles of Neural Science</em>{' '}
-          中的核心模型，逐个用代码从零实现。每一个概念都对应一个可运行的仿真实验，
-          供学生调整参数、观察现象、验证理论。
+          from scratch in code, one by one. Every concept corresponds to a runnable simulation experiment,
+          where students adjust parameters, observe phenomena, and verify the theory.
         </p>
         <p className="text-sm leading-relaxed text-[var(--ink-light)]">
-          本系统覆盖四个层次：从离子通道的分子动力学，到神经回路的群体行为，
-          再到感觉系统的信息编码，最终抵达认知层面的决策模型。
-          所有仿真均在浏览器内实时运算，无需安装任何软件。
+          The system spans four levels: from the molecular dynamics of ion channels, to the population
+          behavior of neural circuits, to information coding in sensory systems, and finally to decision
+          models at the cognitive level. All simulations run in real time in your browser — no software
+          installation required.
         </p>
       </section>
 
       <div className="ornament-divider">⁂</div>
 
       <section className="mb-8">
-        <h2 className="chapter-heading">十二大核心概念</h2>
+        <h2 className="chapter-heading">Twelve Core Concepts</h2>
         <p className="text-sm text-[var(--ink-light)] mb-4">
-          层次递进：细胞 → 回路 → 系统 → 认知
+          Progression: Cells → Circuits → Systems → Cognitive
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ConceptSection
             number="I"
-            title="细胞层 · Cells"
+            title="Cellular Level · Cells"
             href="/cells"
             concepts={[
-              '离子浓度差决定膜电位（Nernst 方程）',
-              '通透性决定静息电位（GHK 方程）',
-              '动作电位是电压门控离子通道的动力学（HH 模型）',
-              '神经元以脉冲序列编码信息（LIF 模型）',
-              '突触输入在时空上整合决定发放',
+              'Ion concentration gradients determine the membrane potential (Nernst equation)',
+              'Permeability determines the resting potential (GHK equation)',
+              'Action potentials are the dynamics of voltage-gated ion channels (HH model)',
+              'Neurons encode information in spike trains (LIF model)',
+              'Synaptic inputs integrate over space and time to trigger firing',
             ]}
           />
           <ConceptSection
             number="II"
-            title="回路层 · Circuits"
+            title="Circuit Level · Circuits"
             href="/circuits"
             concepts={[
-              '突触强度随使用改变（Hebbian 可塑性）',
-              '侧抑制增强感觉对比（中心-周围拮抗）',
-              '皮层兴奋-抑制平衡（Wilson-Cowan）',
-              '振荡与同步是神经节律的基础（Kuramoto）',
+              'Synaptic strength changes with use (Hebbian plasticity)',
+              'Lateral inhibition sharpens sensory contrast (center–surround antagonism)',
+              'Cortical excitation–inhibition balance (Wilson–Cowan)',
+              'Oscillation and synchronization underlie neural rhythms (Kuramoto)',
             ]}
           />
           <ConceptSection
             number="III"
-            title="系统层 · Systems"
+            title="System Level · Systems"
             href="/systems"
             concepts={[
-              '感觉系统按特征调谐（视觉/听觉）',
-              '运动学习与 VOR 增益适应',
-              '联想记忆（Hopfield 网络）',
-              '学习依赖奖赏预测误差（多巴胺）',
+              'Sensory systems are tuned to stimulus features (vision/audition)',
+              'Motor learning and VOR gain adaptation',
+              'Associative memory (Hopfield network)',
+              'Learning depends on reward prediction error (dopamine)',
             ]}
           />
           <ConceptSection
             number="IV"
-            title="认知层 · Cognitive"
+            title="Cognitive Level · Cognition"
             href="/cognitive"
             concepts={[
-              '决策是证据累积到阈值（漂移扩散模型）',
-              '信号检测论：d&apos; 与判断标准',
-              '群体编码与 Fisher 信息',
+              'Decision-making is evidence accumulation to a threshold (drift-diffusion model)',
+              'Signal detection theory: d&apos; and decision criterion',
+              'Population coding and Fisher information',
             ]}
           />
         </div>
@@ -77,24 +78,24 @@ export default function HomePage() {
       <div className="ornament-divider">❧ ☙</div>
 
       <section className="mb-8">
-        <h2 className="chapter-heading">参考教材</h2>
+        <h2 className="chapter-heading">Reference Textbooks</h2>
         <div className="border border-[var(--border-old)] p-4 bg-[rgba(239,224,198,0.3)]">
           <table className="data-table">
             <thead>
               <tr>
-                <th>层次</th>
-                <th>基准教材</th>
-                <th>辅助参考</th>
+                <th>Level</th>
+                <th>Primary Textbook</th>
+                <th>Additional References</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>本科基准</td>
+                <td>Undergraduate foundation</td>
                 <td>Kandel, Principles of Neural Science, 6th</td>
                 <td>Bear, Connors &amp; Paradiso</td>
               </tr>
               <tr>
-                <td>研究生计算</td>
+                <td>Graduate / computational</td>
                 <td>Dayan &amp; Abbott, Theoretical Neuroscience</td>
                 <td>Gerstner et al., Neuronal Dynamics</td>
               </tr>
@@ -104,15 +105,15 @@ export default function HomePage() {
       </section>
 
       <section>
-        <h2 className="chapter-heading">使用说明</h2>
+        <h2 className="chapter-heading">How to Use</h2>
         <p className="text-sm text-[var(--ink)] mb-3">
-          每个模块页面均包含：
+          Each module page includes:
         </p>
         <ul className="text-sm text-[var(--ink)] space-y-1 ml-4 list-disc">
-          <li>核心公式与理论背景</li>
-          <li>可调参数面板——修改参数后点击「运行仿真」</li>
-          <li>仿真结果以纯 CSS 图表呈现（无 SVG/Canvas）</li>
-          <li>数值数据表格供进一步分析</li>
+          <li>Core equations and theoretical background</li>
+          <li>An adjustable parameter panel — change parameters, then click &ldquo;Run Simulation&rdquo;</li>
+          <li>Simulation results rendered as pure-CSS charts (no SVG/Canvas)</li>
+          <li>Numerical data tables for further analysis</li>
         </ul>
       </section>
     </article>

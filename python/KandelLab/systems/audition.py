@@ -1,20 +1,23 @@
-"""听觉：γ-tone 滤波器组与频率调谐（tonotopy）。
+"""Audition: γ-tone filter bank and frequency tuning (tonotopy).
 
-核心概念 #10b：感觉系统按特征调谐（听觉频率选择性）。
+Core concept #10b: sensory systems are tuned to features (auditory frequency
+selectivity).
 
-模型
-----
-    γ-tone 冲激响应（Patterson & Holdsworth）：
+Model
+-----
+    γ-tone impulse response (Patterson & Holdsworth):
         g(t) = t^(n−1) · exp(−2π·b·t) · cos(2π·f·t + φ)，t ≥ 0
 
-    通道带宽取等效矩形带宽（ERB）：
+    Channel bandwidth is taken as the equivalent rectangular bandwidth (ERB):
         ERB(f) = 24.7 · (4.37·f/1000 + 1)
 
-    通道响应 = 信号经通道滤波后的能量（RMS）。
+    Channel response = energy (RMS) of the signal after channel filtering.
 
-验证锚点：
-    纯音刺激在特征频率等于刺激频率的通道响应最大；
-    通道特征频率沿耳蜗从低到高单调排列（tonotopy）。
+Verification anchors:
+    for a pure tone, the channel whose characteristic frequency equals the
+    stimulus frequency responds most strongly;
+    channel characteristic frequencies increase monotonically along the cochlea
+    (tonotopy).
 """
 
 from __future__ import annotations
@@ -25,26 +28,26 @@ from .. import config
 
 
 def erb(f):
-    """等效矩形带宽 ERB(f)（Hz）。"""
+    """Equivalent rectangular bandwidth ERB(f) (Hz)."""
     f = np.asarray(f, dtype=float)
     return 24.7 * (4.37 * f / 1000.0 + 1.0)
 
 
 def gammatone_impulse(t, f, order=4, bw=None, phi=0.0):
-    """γ-tone 冲激响应 g(t)。
+    """γ-tone impulse response g(t).
 
     Parameters
     ----------
     t : array_like
-        时间（s）。
+        Time (s).
     f : float
-        特征频率（Hz）。
+        Characteristic frequency (Hz).
     order : int
-        γ 阶数（n=4 为经典值）。
+        γ order (n=4 is the classic value).
     bw : float | None
-        带宽（Hz）；None 用 ERB(f)。
+        Bandwidth (Hz); None uses ERB(f).
     phi : float
-        相位。
+        Phase.
     """
     bw = erb(f) if bw is None else bw
     t = np.asarray(t, dtype=float)
@@ -58,11 +61,11 @@ def gammatone_impulse(t, f, order=4, bw=None, phi=0.0):
 
 def gammatone_filterbank(fmin=None, fmax=None, n_channels=None, fs=None,
                          order=None, dur=0.02):
-    """生成 γ-tone 滤波器组（特征频率在 ERB 尺度上均匀分布）。
+    """Generate a γ-tone filter bank (characteristic frequencies uniformly spaced on the ERB scale).
 
     Returns
     -------
-    (cf, filters) : 特征频率数组与 (n, len(t)) 滤波器核矩阵。
+    (cf, filters) : characteristic-frequency array and (n, len(t)) kernel matrix.
     """
     p = config.AUDITION_DEFAULTS
     fmin = p["fmin"] if fmin is None else fmin
@@ -71,9 +74,9 @@ def gammatone_filterbank(fmin=None, fmax=None, n_channels=None, fs=None,
     fs = p["fs"] if fs is None else fs
     order = p["order"] if order is None else order
 
-    # ERB 尺度：n_channels 个通道，ERB 数单调递增
+    # ERB scale: n_channels channels with monotonically increasing ERB number
     n_erb = np.linspace(0.0, 1.0, n)
-    # 在 ERB 尺度均匀：f(i) = fmin + (fmax - fmin) * 用 ERB 单调映射
+    # uniform on the ERB scale: f(i) = fmin + (fmax - fmin) * via the monotonic ERB mapping
     cf = _erb_spaced(fmin, fmax, n)
     t = np.arange(0.0, dur, 1.0 / fs)
     filters = np.array([gammatone_impulse(t, fc, order) for fc in cf])
@@ -81,20 +84,20 @@ def gammatone_filterbank(fmin=None, fmax=None, n_channels=None, fs=None,
 
 
 def _erb_spaced(fmin, fmax, n):
-    """在 ERB 数尺度上均匀分布的特征频率（对数-like 单调）。"""
+    """Characteristic frequencies uniformly spaced on the ERB-number scale (log-like monotonic)."""
     # ERB number: 21.4·log10(4.37·f/1000 + 1)
     def num(f):
         return 21.4 * np.log10(4.37 * f / 1000.0 + 1.0)
 
     lo, hi = num(fmin), num(fmax)
     nums = np.linspace(lo, hi, n)
-    # 反函数：f = 1000/4.37·(10^(nums/21.4) − 1)
+    # inverse function: f = 1000/4.37·(10^(nums/21.4) − 1)
     f = 1000.0 / 4.37 * (10.0 ** (nums / 21.4) - 1.0)
     return f
 
 
 def channel_response(signal, filters, fs):
-    """每个通道对信号的响应（RMS 能量）。"""
+    """Response of each channel to the signal (RMS energy)."""
     signal = np.asarray(signal, dtype=float)
     return np.sqrt(np.mean(
         np.array([np.convolve(signal, f, mode="same") ** 2 for f in filters]),
@@ -103,9 +106,9 @@ def channel_response(signal, filters, fs):
 
 def pure_tone_response(f_stim, fs=None, dur=0.05, fmin=None, fmax=None,
                        n_channels=None, order=None):
-    """纯音刺激 → 各通道响应 → (cf, response)。
+    """Pure-tone stimulus → per-channel response → (cf, response).
 
-    验证锚点：cf 最接近 f_stim 的通道响应最大。
+    Verification anchor: the channel whose cf is closest to f_stim responds most.
     """
     p = config.AUDITION_DEFAULTS
     fs = p["fs"] if fs is None else fs
@@ -118,7 +121,7 @@ def pure_tone_response(f_stim, fs=None, dur=0.05, fmin=None, fmax=None,
 
 
 def tonotopy_curve(f_stim_list, fs=None, dur=0.05, **fb_kwargs):
-    """扫描刺激频率：返回 (刺激频率, 最优通道频率, 最优响应)。"""
+    """Scan stimulus frequencies: returns (stimulus frequencies, best channel frequencies, best responses)."""
     best = []
     for f_stim in f_stim_list:
         cf, resp = pure_tone_response(f_stim, fs, dur, **fb_kwargs)

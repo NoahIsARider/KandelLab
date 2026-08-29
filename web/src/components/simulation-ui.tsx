@@ -45,14 +45,14 @@ interface RunSimulationProps {
   label?: string;
 }
 
-export function RunButton({ onRun, running, label = '运行仿真' }: RunSimulationProps) {
+export function RunButton({ onRun, running, label = 'Run Simulation' }: RunSimulationProps) {
   return (
     <button
       onClick={onRun}
       disabled={running}
       className="run-button"
     >
-      {running ? '运算中...' : label}
+      {running ? 'Computing...' : label}
     </button>
   );
 }

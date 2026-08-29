@@ -1,21 +1,26 @@
-"""VOR（前庭眼动反射）增益适应：小脑 Marr–Albus 误差驱动学习。
+"""VOR (vestibulo-ocular reflex) gain adaptation: cerebellar Marr–Albus error-driven learning.
 
-核心概念 #10c（运动系统）：运动学习由误差信号驱动，增益可适应。
+Core concept #10c (motor system): motor learning is driven by error signals;
+gains are adaptable.
 
-模型
-----
-    VOR 增益 g：眼速 = g × 头速。视觉目标静止时理想增益 g* = 1。
+Model
+-----
+    VOR gain g: eye velocity = g × head velocity. For a stationary visual target
+    the ideal gain is g* = 1.
 
-    误差（视网膜滑移）= 目标像在视网膜上的速度：
+    Error (retinal slip) = velocity of the target image on the retina:
         error = g_target − g
 
-    增益更新（Marr–Albus 风格）：
-        Δg = η · error · (平行纤维与攀缘纤维共激活的信号)
+    Gain update (Marr–Albus style):
+        Δg = η · error · (signal from co-activation of parallel fibers and
+                          climbing fibers)
 
-    本实现简化为：Δg = η · (g_target − g)，收敛到目标增益。
+    This implementation simplifies it to: Δg = η · (g_target − g),
+    converging to the target gain.
 
-验证锚点：
-    训练后增益单调收敛到目标值；误差衰减到 0。
+Verification anchors:
+    after training the gain converges monotonically to the target value;
+    the error decays to 0.
 """
 
 from __future__ import annotations
@@ -26,31 +31,31 @@ from .. import config
 
 
 def update_gain(g, error, eta=None):
-    """单次增益更新：Δg = η·error。"""
+    """Single gain update: Δg = η·error."""
     eta = config.VOR_DEFAULTS["eta"] if eta is None else eta
     return g + eta * error
 
 
 def simulate_adaptation(n_trials=200, g0=None, target_g=None, eta=None,
                         noise=0.0, seed=0):
-    """模拟 VOR 增益适应训练。
+    """Simulate VOR gain adaptation training.
 
     Parameters
     ----------
     n_trials : int
     g0 : float | None
-        初始增益。
+        Initial gain.
     target_g : float | None
-        目标增益。
+        Target gain.
     eta : float | None
-        学习率。
+        Learning rate.
     noise : float
-        每次 trial 增益观测噪声标准差。
+        Standard deviation of the gain observation noise per trial.
     seed : int
 
     Returns
     -------
-    (trial, gain_history, error_history) : 训练过程记录。
+    (trial, gain_history, error_history) : record of the training process.
     """
     p = config.VOR_DEFAULTS
     g0 = p["g0"] if g0 is None else g0
@@ -72,6 +77,6 @@ def simulate_adaptation(n_trials=200, g0=None, target_g=None, eta=None,
 
 
 def converged_gain(gains, target_g, tol=1e-2):
-    """判断末端增益是否收敛到目标（末 20% 均值与目标差 < tol）。"""
+    """Check whether the terminal gain has converged to the target (final 20% mean within tol of target)."""
     tail = np.asarray(gains, dtype=float)[-int(len(gains) * 0.2):]
     return bool(abs(float(np.mean(tail)) - target_g) < tol)

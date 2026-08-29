@@ -1,18 +1,19 @@
-"""Kuramoto 相位振荡器同步。
+"""Kuramoto phase-oscillator synchronization.
 
-核心概念 #9：振荡与同步是神经节律（脑电/γ 振荡）的基础。
+Core concept #9: oscillation and synchronization underlie neural rhythms
+(EEG / γ oscillations).
 
-模型
-----
+Model
+-----
     dθ_i/dt = ω_i + (K/N) · Σ_j sin(θ_j − θ_i)
 
-序参量：
-    R = |(1/N) Σ_j exp(i·θ_j)| ，衡量同步程度（0 ≤ R ≤ 1）。
+Order parameter:
+    R = |(1/N) Σ_j exp(i·θ_j)| ，measures the degree of synchronization (0 ≤ R ≤ 1).
 
-验证锚点：
-    K → 0 时 R ≈ 1/√N（去同步极限）；
-    K → ∞ 时 R → 1（完全同步）；
-    R(K) 随 K 单调上升（超临界相变）。
+Verification anchors:
+    K → 0: R ≈ 1/√N (desynchronized limit);
+    K → ∞: R → 1 (full synchronization);
+    R(K) rises monotonically with K (supercritical phase transition).
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ from .. import config
 
 
 class Kuramoto:
-    """Kuramoto 网络。默认参数来自 config.KURAMOTO_DEFAULTS。"""
+    """Kuramoto network. Default parameters come from config.KURAMOTO_DEFAULTS."""
 
     def __init__(self, N=None, omega_mean=None, omega_std=None, seed=None):
         p = config.KURAMOTO_DEFAULTS
@@ -40,20 +41,20 @@ class Kuramoto:
         return dtheta
 
     def order_parameter(self, theta):
-        """序参量 R。"""
+        """Order parameter R."""
         theta = np.asarray(theta, dtype=float)
         return float(np.abs(np.mean(np.exp(1j * theta))))
 
     def simulate(self, K, t_max=200.0, dt=0.01, theta0=None, burn=50.0,
                  method="euler"):
-        """在耦合强度 K 下积分并返回稳态 R 及相位历史。
+        """Integrate under coupling strength K and return the steady-state R and phase history.
 
         Returns
         -------
-        R : float （burn 之后的平均序参量）
+        R : float (mean order parameter after burn)
         t : np.ndarray
         theta : np.ndarray (N_steps, N)
-        R_t : np.ndarray （每一步的序参量）
+        R_t : np.ndarray (order parameter at each step)
         """
         from ..utils.neuro import integrate_ode
         if theta0 is None:
@@ -66,11 +67,11 @@ class Kuramoto:
 
     def phase_transition(self, K_range, t_max=150.0, dt=0.01, burn=50.0,
                          seed=0):
-        """扫描耦合强度 K → 平均序参量 R(K)。
+        """Scan coupling strength K → mean order parameter R(K).
 
         Returns
         -------
-        (K, R) : 耦合强度序列与对应序参量。
+        (K, R) : coupling-strength sequence and corresponding order parameters.
         """
         rng = np.random.default_rng(seed)
         K = np.asarray(K_range, dtype=float)
@@ -81,11 +82,11 @@ class Kuramoto:
         return K, R
 
     def snapshot_phases(self, K_list, t_max=100.0, dt=0.01, burn=80.0, seed=0):
-        """不同耦合强度下的稳态相位分布（用于可视化）。
+        """Steady-state phase distributions at different coupling strengths (for visualization).
 
         Returns
         -------
-        list[np.ndarray] : 每个 K 对应的相位数组。
+        list[np.ndarray] : one phase array per K.
         """
         rng = np.random.default_rng(seed)
         theta0 = rng.uniform(0, 2 * np.pi, self.N)
@@ -97,5 +98,5 @@ class Kuramoto:
 
 
 def analytic_weak_coupling_r(n):
-    """弱耦合（K→0）序参量的理论预测：R ≈ 1/√N。"""
+    """Theoretical prediction of the order parameter under weak coupling (K→0): R ≈ 1/√N."""
     return 1.0 / np.sqrt(n)

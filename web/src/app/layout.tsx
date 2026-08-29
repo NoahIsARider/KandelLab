@@ -3,15 +3,15 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'KandelLab — 神经科学原理仿真系统',
+    default: 'KandelLab — Principles of Neural Science, in Simulation',
     template: '%s — KandelLab',
   },
-  description: '把神经科学教材的核心模型，逐个从零实现。供本科生/研究生学习、做实验、做课堂作业。',
+  description: 'Core models from the neuroscience textbook, implemented one by one from scratch. For undergraduate and graduate students to study, run experiments, and complete coursework.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <body className="antialiased">
         <div className="manuscript-page">
           <header className="text-center mb-8">
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               KandelLab
             </h1>
             <p className="text-[var(--ink-light)] text-sm tracking-widest uppercase font-[var(--font-display)]">
-              神经科学原理仿真系统
+              Principles of Neural Science, in Simulation
             </p>
             <div className="ornament-divider">❧ ※ ❧</div>
           </header>
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               KandelLab · Inspired by Kandel&apos;s Principles of Neural Science
             </p>
             <p className="text-center text-xs text-[var(--ink-light)] mt-1">
-              细胞 → 回路 → 系统 → 认知
+              Cells → Circuits → Systems → Cognition
             </p>
           </footer>
         </div>
@@ -45,14 +45,14 @@ function Navigation() {
   return (
     <nav className="mb-8">
       <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-        <NavLink href="/" label="卷首" />
+        <NavLink href="/" label="Prologue" />
         <span className="text-[var(--border-old)]">|</span>
-        <NavLink href="/cells" label="I. 细胞" />
-        <NavLink href="/circuits" label="II. 回路" />
-        <NavLink href="/systems" label="III. 系统" />
-        <NavLink href="/cognitive" label="IV. 认知" />
+        <NavLink href="/cells" label="I. Cells" />
+        <NavLink href="/circuits" label="II. Circuits" />
+        <NavLink href="/systems" label="III. Systems" />
+        <NavLink href="/cognitive" label="IV. Cognition" />
         <span className="text-[var(--border-old)]">|</span>
-        <NavLink href="/experiments" label="实验" />
+        <NavLink href="/experiments" label="Experiments" />
       </div>
     </nav>
   );

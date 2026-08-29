@@ -1,4 +1,4 @@
-"""支持 `python -m KandelLab` 运行 CLI。"""
+"""Supports running the CLI via `python -m KandelLab`."""
 
 import sys
 

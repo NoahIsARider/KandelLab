@@ -1,4 +1,4 @@
-"""KandelLab — 数值工具：积分器、发放检测、统计与通用数学工具。"""
+"""KandelLab — numerical tools: integrators, spike detection, statistics and general math utilities."""
 
 from __future__ import annotations
 
@@ -8,12 +8,12 @@ from .. import config
 
 
 def euler_step(f, y, t, dt, *args, **kwargs):
-    """Euler 显式积分单步。f(y, t, *args) -> dy/dt。"""
+    """Single explicit Euler integration step. f(y, t, *args) -> dy/dt."""
     return y + dt * np.asarray(f(y, t, *args, **kwargs), dtype=float)
 
 
 def rk4_step(f, y, t, dt, *args, **kwargs):
-    """经典 RK4 单步。f(y, t, *args) -> dy/dt。"""
+    """Classic RK4 single step. f(y, t, *args) -> dy/dt."""
     y = np.asarray(y, dtype=float)
     k1 = np.asarray(f(y, t, *args, **kwargs), dtype=float)
     k2 = np.asarray(f(y + 0.5 * dt * k1, t + 0.5 * dt, *args, **kwargs), dtype=float)
@@ -26,27 +26,27 @@ INTEGRATORS = {"euler": euler_step, "rk4": rk4_step}
 
 
 def integrate_ode(f, y0, t_max, dt=None, method="rk4", t0=0.0, **kwargs):
-    """对一阶 ODE 组做数值积分。
+    """Numerically integrate a first-order ODE system.
 
     Parameters
     ----------
     f : callable
-        f(y, t, **kwargs) -> dy/dt（y 为向量或标量）。
+        f(y, t, **kwargs) -> dy/dt (y may be a vector or scalar).
     y0 : array_like
-        初值。
+        Initial value.
     t_max : float
-        积分时长（单位与 dt 一致）。
+        Integration duration (same units as dt).
     dt : float | None
-        时间步长；None 时取 config.NUMERICS["default_dt"]。
+        Time step; None uses config.NUMERICS["default_dt"].
     method : str
-        "euler" 或 "rk4"。
+        "euler" or "rk4".
     t0 : float
-        初始时刻。
+        Initial time.
 
     Returns
     -------
     t : np.ndarray  (N,)
-    y : np.ndarray  (N, ...) 维度与 y0 保持一致
+    y : np.ndarray  (N, ...) with the same shape as y0
     """
     dt = config.NUMERICS["default_dt"] if dt is None else dt
     stepper = INTEGRATORS[method]
@@ -62,22 +62,24 @@ def integrate_ode(f, y0, t_max, dt=None, method="rk4", t0=0.0, **kwargs):
 
 def detect_spikes(v, v_thresh=None, dt=None, refractory_ms=0.0,
                   grad_thresh=30.0):
-    """从膜电位轨迹提取发放时刻。
+    """Extract spike times from a membrane-potential trace.
 
     Parameters
     ----------
     v : np.ndarray
-        膜电位序列（mV）。
+        Membrane potential sequence (mV).
     v_thresh : float | None
-        检测阈值；None 时使用梯度法：以 dV/dt 超过 grad_thresh（默认
-        30 mV/ms）的上升沿识别动作电位。梯度法可区分真正的 AP 与
-        亚阈值去极化（如 HH 阈值下的小脉冲），也适用于 LIF 的瞬发放电。
+        Detection threshold; None uses the gradient method: rising edges with
+        dV/dt above grad_thresh (default 30 mV/ms) are identified as action
+        potentials. The gradient method distinguishes true APs from subthreshold
+        depolarizations (e.g. small pulses below the HH threshold) and also
+        works for transient LIF firing.
     dt : float | None
-        采样间隔（ms）；None 时按索引计时刻。
+        Sampling interval (ms); None times the spikes by index.
     refractory_ms : float
-        最小发放间隔（用于去除检测毛刺）。
+        Minimum inter-spike interval (removes detection glitches).
     grad_thresh : float
-        梯度阈值（mV/ms），仅 v_thresh 为 None 时使用。
+        Gradient threshold (mV/ms); used only when v_thresh is None.
 
     Returns
     -------
@@ -86,7 +88,7 @@ def detect_spikes(v, v_thresh=None, dt=None, refractory_ms=0.0,
     v = np.asarray(v, dtype=float)
     if v_thresh is not None:
         above = v > v_thresh
-        # 上升沿触发
+        # trigger on rising edges
         cross = above[1:] & ~above[:-1]
         idx = np.flatnonzero(cross) + 1
     else:
@@ -94,14 +96,14 @@ def detect_spikes(v, v_thresh=None, dt=None, refractory_ms=0.0,
         if dt is not None:
             grad = grad / dt
         rising = np.concatenate(([False], grad > grad_thresh))
-        # 每段连续上升（rising 从 False→True）的起始位置
+        # start positions of each contiguous rising run (rising False→True)
         starts = np.flatnonzero(rising[1:] & ~rising[:-1]) + 1
         idx = starts
-        # 排除上升段起点之前的下降伪影：要求起点之后 v 确实显著高于起点
+        # exclude falling artifacts before the rising run: require v after the start to be clearly above the start
         if idx.size:
             keep = [i for i in idx if v[i] - v[0] > grad_thresh * (dt or 1.0)]
             idx = np.asarray(keep, dtype=int)
-    # 不应期去重
+    # refractory dedup
     if refractory_ms > 0 and dt is not None:
         keep = [idx[0]] if idx.size else []
         for j in idx[1:]:
@@ -114,19 +116,19 @@ def detect_spikes(v, v_thresh=None, dt=None, refractory_ms=0.0,
 
 
 def firing_rate(spike_times, duration):
-    """由发放时刻列表与观测时长计算平均发放率（Hz）。"""
+    """Average firing rate (Hz) from a spike-time list and observation duration."""
     spike_times = np.asarray(spike_times, dtype=float)
     return spike_times.size / float(duration) if duration > 0 else 0.0
 
 
 def gaussian(x, mu, sigma):
-    """高斯函数。"""
+    """Gaussian function."""
     x = np.asarray(x, dtype=float)
     return np.exp(-0.5 * ((x - mu) / sigma) ** 2)
 
 
 def sigmoid(x, gain=1.0, threshold=0.0):
-    """逻辑斯蒂 sigmoid：1 / (1 + exp(-gain*(x-threshold)))。"""
+    """Logistic sigmoid: 1 / (1 + exp(-gain*(x-threshold)))."""
     x = np.asarray(x, dtype=float)
     z = gain * (x - threshold)
     z = np.clip(z, -700.0, 700.0)
@@ -134,7 +136,7 @@ def sigmoid(x, gain=1.0, threshold=0.0):
 
 
 def normalise(x, axis=None):
-    """将数组线性缩放到 [0, 1]。"""
+    """Linearly scale an array to [0, 1]."""
     x = np.asarray(x, dtype=float)
     mn = x.min(axis=axis, keepdims=True) if axis is not None else x.min()
     mx = x.max(axis=axis, keepdims=True) if axis is not None else x.max()
@@ -145,19 +147,19 @@ def normalise(x, axis=None):
 
 
 def rng(seed=None):
-    """返回带种子的 numpy 随机数生成器（默认使用全局配置种子）。"""
+    """Return a seeded numpy random number generator (defaults to the global config seed)."""
     if seed is None:
         seed = config.NUMERICS["seed"]
     return np.random.default_rng(int(seed))
 
 
 def spike_times_to_raster(spike_times, n_trials, duration, dt=0.001):
-    """把多次试验的发放时刻列表转为栅栏图二进制矩阵 (n_trials, n_bins)。
+    """Convert spike-time lists from multiple trials into a raster binary matrix (n_trials, n_bins).
 
     Parameters
     ----------
     spike_times : list[np.ndarray]
-        每次试验的发放时刻。
+        Spike times of each trial.
     n_trials : int
     duration : float
     dt : float

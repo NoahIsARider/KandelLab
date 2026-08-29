@@ -29,7 +29,7 @@ export default function MemoryPage() {
 
   return (
     <article>
-      <ChapterHeading>§11 联想记忆 — Hopfield 网络</ChapterHeading>
+      <ChapterHeading>§11 Associative Memory — Hopfield Network</ChapterHeading>
 
       <FormulaBlock>
         w<sub>ij</sub> = (1/N) · Σ<sub>μ</sub> ξ<sub>i</sub><sup>μ</sup> · ξ<sub>j</sub><sup>μ</sup><br />
@@ -37,18 +37,19 @@ export default function MemoryPage() {
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        Hopfield 网络是一种递归神经网络，可存储二元模式并通过异步更新恢复损坏的输入。
-        每次更新使能量函数单调下降，保证收敛到局部极小。
-        存储容量约为 0.138N 个模式。
+        The Hopfield network is a recurrent neural network that stores binary patterns and retrieves
+        corrupted inputs through asynchronous updates. Each update monotonically decreases the energy
+        function, guaranteeing convergence to a local minimum. Its storage capacity is roughly 0.138N
+        patterns.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="神经元数 N" value={N} onChange={setN} min={20} max={200} step={10} />
-        <ParamField label="存储模式数" value={nPatterns} onChange={setNPatterns} min={1} max={20} step={1} />
-        <ParamField label="噪声水平" value={noiseLevel} onChange={setNoiseLevel} min={0.05} max={0.5} step={0.05} />
-        <ParamField label="最大迭代" value={maxIter} onChange={setMaxIter} min={50} max={500} step={50} />
+      <ResultCard title="Parameters">
+        <ParamField label="Number of neurons N" value={N} onChange={setN} min={20} max={200} step={10} />
+        <ParamField label="Number of stored patterns" value={nPatterns} onChange={setNPatterns} min={1} max={20} step={1} />
+        <ParamField label="Noise level" value={noiseLevel} onChange={setNoiseLevel} min={0.05} max={0.5} step={0.05} />
+        <ParamField label="Maximum iterations" value={maxIter} onChange={setMaxIter} min={50} max={500} step={50} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
@@ -56,22 +57,22 @@ export default function MemoryPage() {
 
       {result && (
         <>
-          <ResultCard title="能量函数下降">
+          <ResultCard title="Energy Function Decay">
             <Waveform data={result.energyHistory} height={80} color="var(--verdigris)" label="E(t)" />
             <p className="text-xs text-[var(--ink-light)] mt-2">
-              能量单调不增 → 收敛于 {result.converged ? `第 ${result.iterations} 步` : '未收敛'}
+              Energy never increases → {result.converged ? `converged at step ${result.iterations}` : 'did not converge'}
             </p>
           </ResultCard>
 
-          <ResultCard title="恢复结果">
+          <ResultCard title="Retrieval Results">
             <DataTable
-              headers={['指标', '值']}
+              headers={['Metric', 'Value']}
               rows={[
-                ['存储模式数', nPatterns],
-                ['噪声翻转率', `${(noiseLevel * 100).toFixed(0)}%`],
-                ['收敛', result.converged ? '是' : '否'],
-                ['迭代次数', result.iterations],
-                ['最终能量', result.energyHistory[result.energyHistory.length - 1].toFixed(2)],
+                ['Stored patterns', nPatterns],
+                ['Noise flip rate', `${(noiseLevel * 100).toFixed(0)}%`],
+                ['Converged', result.converged ? 'Yes' : 'No'],
+                ['Iterations', result.iterations],
+                ['Final energy', result.energyHistory[result.energyHistory.length - 1].toFixed(2)],
               ]}
             />
           </ResultCard>
@@ -79,7 +80,7 @@ export default function MemoryPage() {
       )}
 
       {capData.length > 0 && (
-        <ResultCard title="容量测试（成功率 vs 模式数）">
+        <ResultCard title="Capacity Test (Success Rate vs Number of Patterns)">
           <BarChart
             data={capData.map(d => ({
               label: `${d.nPatterns}`,
@@ -88,7 +89,7 @@ export default function MemoryPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            模式数超过 ~0.138N 时成功率急剧下降
+            Success rate drops sharply once the number of patterns exceeds ~0.138N
           </p>
         </ResultCard>
       )}

@@ -36,7 +36,7 @@ export default function WilsonCowanPage() {
 
   return (
     <article>
-      <ChapterHeading>§8 Wilson-Cowan 模型 — 兴奋-抑制群体动力学</ChapterHeading>
+      <ChapterHeading>§8 Wilson–Cowan Model — Excitatory–Inhibitory Population Dynamics</ChapterHeading>
 
       <FormulaBlock>
         τ<sub>E</sub> · dE/dt = -E + S(w<sub>EE</sub>E - w<sub>EI</sub>I + P - θ<sub>E</sub>)<br />
@@ -44,27 +44,27 @@ export default function WilsonCowanPage() {
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        Wilson-Cowan 模型描述兴奋性（E）与抑制性（I）神经元群体的平均活动。
-        系统可呈现单稳态、双稳态（切换）、振荡等多种动力学行为，
-        取决于连接强度和外部输入。
+        The Wilson–Cowan model describes the mean activity of excitatory (E) and inhibitory (I)
+        neuronal populations. Depending on connection strengths and external inputs, the system can
+        exhibit monostability, bistability (switching), oscillations, and other dynamical behaviors.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
+      <ResultCard title="Parameters">
         <ParamField label="P_ext" value={P_ext} onChange={setP_ext} unit="" min={-2} max={5} step={0.1} />
         <ParamField label="E₀" value={E0} onChange={setE0} min={0} max={1} step={0.05} />
         <ParamField label="I₀" value={I0} onChange={setI0} min={0} max={1} step={0.05} />
-        <ParamField label="时长" value={duration} onChange={setDuration} unit="" min={20} max={500} step={10} />
+        <ParamField label="Duration" value={duration} onChange={setDuration} unit="" min={20} max={500} step={10} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
       </ResultCard>
 
       {result && (
-        <ResultCard title="群体活动 E(t), I(t)">
-          <Waveform data={result.E} height={60} color="var(--verdigris)" label="E (兴奋)" />
-          <Waveform data={result.I} height={60} color="var(--ochre)" label="I (抑制)" />
+        <ResultCard title="Population Activity E(t), I(t)">
+          <Waveform data={result.E} height={60} color="var(--verdigris)" label="E (excitatory)" />
+          <Waveform data={result.I} height={60} color="var(--ochre)" label="I (inhibitory)" />
           <TextScatter
             points={result.E.map((e, i) => ({ x: e, y: result.I[i] }))}
             width={30}
@@ -72,21 +72,21 @@ export default function WilsonCowanPage() {
             xLabel="E"
             yLabel="I"
           />
-          <p className="text-xs text-[var(--ink-light)] mt-1">相空间轨迹 (E, I)</p>
+          <p className="text-xs text-[var(--ink-light)] mt-1">Phase-space trajectory (E, I)</p>
         </ResultCard>
       )}
 
       {fixedPts.length > 0 && (
-        <ResultCard title="不动点">
+        <ResultCard title="Fixed Points">
           <DataTable
-            headers={['E*', 'I*', '稳定性']}
-            rows={fixedPts.map(fp => [fp.E, fp.I, fp.stable ? '稳定' : '不稳定'])}
+            headers={['E*', 'I*', 'Stability']}
+            rows={fixedPts.map(fp => [fp.E, fp.I, fp.stable ? 'stable' : 'unstable'])}
           />
         </ResultCard>
       )}
 
       {bifurData.length > 0 && (
-        <ResultCard title="分岔：E_ss vs P_ext">
+        <ResultCard title="Bifurcation: E_ss vs P_ext">
           <BarChart
             data={bifurData.map(d => ({
               label: d.P.toFixed(1),
@@ -94,7 +94,7 @@ export default function WilsonCowanPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            P_ext 增大 → 兴奋活动增大，可能出现双稳态切换
+            Increasing P_ext → stronger excitatory activity; bistable switching may appear
           </p>
         </ResultCard>
       )}

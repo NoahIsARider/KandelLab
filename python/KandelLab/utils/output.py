@@ -1,4 +1,4 @@
-"""KandelLab — 控制台输出：表格、键值对、ASCII 标题。"""
+"""KandelLab — console output: tables, key-value pairs, ASCII banners."""
 
 from __future__ import annotations
 
@@ -8,22 +8,22 @@ from pathlib import Path
 
 
 def ascii_banner(title: str, width: int = 60, char: str = "=") -> str:
-    """居中的 ASCII 分隔横幅。"""
+    """Centered ASCII separator banner."""
     pad = max(0, (width - len(title) - 2) // 2)
     line = char * width
     return f"{line}\n{char} {title:<{pad*2}} {char}\n{line}"
 
 
 def print_table(rows, headers=None, float_fmt=".3f"):
-    """以对齐的等宽列打印表格。
+    """Print a table with aligned fixed-width columns.
 
     Parameters
     ----------
     rows : list[list]
-        数据行。
+        Data rows.
     headers : list[str] | None
     float_fmt : str
-        浮点数格式；None 表示原样输出。
+        Float format; None prints values as-is.
     """
     def fmt(v):
         if float_fmt is not None and isinstance(v, (int, float)):
@@ -46,7 +46,7 @@ def print_table(rows, headers=None, float_fmt=".3f"):
 
 
 def print_kv(pairs, title=None):
-    """打印键值对块。"""
+    """Print a key-value block."""
     if title:
         print(f"[ {title} ]")
     for k, v in pairs:
@@ -54,7 +54,7 @@ def print_kv(pairs, title=None):
 
 
 def save_csv(rows, path, headers=None, float_fmt="%.6g"):
-    """保存数据到 CSV。
+    """Save data to CSV.
 
     Parameters
     ----------
@@ -81,14 +81,14 @@ def save_csv(rows, path, headers=None, float_fmt="%.6g"):
 
 
 def make_output_dir(root: str = "output") -> Path:
-    """确保输出目录存在并返回其路径。"""
+    """Ensure the output directory exists and return its path."""
     out = Path(root)
     out.mkdir(parents=True, exist_ok=True)
     return out
 
 
 def ensure_subdir(root: str, name: str) -> Path:
-    """在输出根目录下创建（若不存在）子目录并返回路径。"""
+    """Create (if missing) a subdirectory under the output root and return its path."""
     d = Path(root) / name
     d.mkdir(parents=True, exist_ok=True)
     return d

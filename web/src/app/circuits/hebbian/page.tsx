@@ -44,7 +44,7 @@ export default function HebbianPage() {
 
   return (
     <article>
-      <ChapterHeading>§6 Hebbian 学习 — 突触可塑性</ChapterHeading>
+      <ChapterHeading>§6 Hebbian Learning — Synaptic Plasticity</ChapterHeading>
 
       <FormulaBlock>
         Hebb: Δw = η · x · y<br />
@@ -52,26 +52,27 @@ export default function HebbianPage() {
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        Hebb 规则：同时激活的神经元之间的连接增强。BCM 规则引入滑动阈值 θ<sub>M</sub>，
-        当突触后活动高于阈值时产生 LTP，低于阈值时产生 LTD。
-        STDP（脉冲时序依赖可塑性）进一步精确到毫秒级时序。
+        Hebb&apos;s rule: connections between neurons that fire together are strengthened.
+        The BCM rule introduces a sliding threshold θ<sub>M</sub>: postsynaptic activity above the
+        threshold produces LTP, while activity below it produces LTD.
+        STDP (spike-timing-dependent plasticity) refines this to millisecond-scale timing.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="学习率 η" value={eta} onChange={setEta} min={0.001} max={0.1} step={0.001} />
-        <ParamField label="突触前数量" value={nPre} onChange={setNPre} min={3} max={20} step={1} />
-        <ParamField label="步数" value={nSteps} onChange={setNSteps} min={100} max={2000} step={100} />
+      <ResultCard title="Parameters">
+        <ParamField label="Learning rate η" value={eta} onChange={setEta} min={0.001} max={0.1} step={0.001} />
+        <ParamField label="Number of presynaptic neurons" value={nPre} onChange={setNPre} min={3} max={20} step={1} />
+        <ParamField label="Number of steps" value={nSteps} onChange={setNSteps} min={100} max={2000} step={100} />
         <div className="flex items-center gap-3 mt-2">
-          <label className="text-sm text-[var(--ink)] font-[var(--font-display)] min-w-[120px]">输入模式</label>
+          <label className="text-sm text-[var(--ink)] font-[var(--font-display)] min-w-[120px]">Input pattern</label>
           <select
             value={correlated ? 'correlated' : 'random'}
             onChange={(e) => setCorrelated(e.target.value === 'correlated')}
             className="param-input w-auto"
           >
-            <option value="correlated">相关输入</option>
-            <option value="random">随机输入</option>
+            <option value="correlated">Correlated input</option>
+            <option value="random">Random input</option>
           </select>
         </div>
         <div className="mt-4">
@@ -80,9 +81,9 @@ export default function HebbianPage() {
       </ResultCard>
 
       {hebbResult && (
-        <ResultCard title="Hebbian 权重演化">
+        <ResultCard title="Hebbian Weight Evolution">
           <p className="text-xs text-[var(--ink-light)] mb-2">
-            最终权重（{nPre} 个突触前神经元 → 1 个突触后）
+            Final weights ({nPre} presynaptic neurons → 1 postsynaptic)
           </p>
           <BarChart
             data={hebbResult.weights[hebbResult.weights.length - 1].map((w, i) => ({
@@ -92,20 +93,20 @@ export default function HebbianPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            {correlated ? '相关输入 → 部分权重定向增强（选择性学习）' : '随机输入 → 权重均匀分布'}
+            {correlated ? 'Correlated input → specific weights selectively strengthened (selective learning)' : 'Random input → weights stay uniform'}
           </p>
         </ResultCard>
       )}
 
       {bcmResult && (
-        <ResultCard title="BCM 滑动阈值">
-          <Waveform data={bcmResult.weight} height={60} color="var(--verdigris)" label="突触权重 w(t)" />
-          <Waveform data={bcmResult.theta_M} height={60} color="var(--ochre)" label="滑动阈值 θ_M(t)" />
+        <ResultCard title="BCM Sliding Threshold">
+          <Waveform data={bcmResult.weight} height={60} color="var(--verdigris)" label="Synaptic weight w(t)" />
+          <Waveform data={bcmResult.theta_M} height={60} color="var(--ochre)" label="Sliding threshold θ_M(t)" />
         </ResultCard>
       )}
 
       {ltpData.length > 0 && (
-        <ResultCard title="STDP 学习窗口（LTP-LTD 曲线）">
+        <ResultCard title="STDP Learning Window (LTP–LTD Curve)">
           <BarChart
             data={ltpData.filter((_, i) => i % 2 === 0).map(d => ({
               label: `${d.dt.toFixed(0)}`,
@@ -114,7 +115,7 @@ export default function HebbianPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            正 Δt（前→后）→ LTP；负 Δt（后→前）→ LTD
+            Positive Δt (pre → post) → LTP; negative Δt (post → pre) → LTD
           </p>
         </ResultCard>
       )}

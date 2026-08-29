@@ -27,7 +27,7 @@ export default function KuramotoPage() {
 
   return (
     <article>
-      <ChapterHeading>§9 Kuramoto 模型 — 相位振荡器同步</ChapterHeading>
+      <ChapterHeading>§9 Kuramoto Model — Synchronization of Phase Oscillators</ChapterHeading>
 
       <FormulaBlock>
         dθ<sub>i</sub>/dt = ω<sub>i</sub> + (K/N) · Σ<sub>j</sub> sin(θ<sub>j</sub> - θ<sub>i</sub>)<br />
@@ -35,33 +35,34 @@ export default function KuramotoPage() {
       </FormulaBlock>
 
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        Kuramoto 模型描述 N 个相位振荡器通过全局耦合实现同步的过程。
-        序参量 R 度量同步程度：R ≈ 0 为非同步态，R ≈ 1 为完全同步。
-        当耦合强度 K 超过临界值时，系统发生从非同步到同步的连续相变。
+        The Kuramoto model describes how N phase oscillators synchronize through global coupling.
+        The order parameter R measures the degree of synchronization: R ≈ 0 is a desynchronized state,
+        R ≈ 1 is full synchronization. When the coupling strength K exceeds a critical value, the system
+        undergoes a continuous phase transition from desynchronization to synchronization.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
 
-      <ResultCard title="参数">
-        <ParamField label="振子数 N" value={N} onChange={setN} min={10} max={200} step={10} />
-        <ParamField label="耦合强度 K" value={K} onChange={setK} min={0} max={10} step={0.5} />
-        <ParamField label="时长" value={duration} onChange={setDuration} min={20} max={500} step={10} />
+      <ResultCard title="Parameters">
+        <ParamField label="Number of oscillators N" value={N} onChange={setN} min={10} max={200} step={10} />
+        <ParamField label="Coupling strength K" value={K} onChange={setK} min={0} max={10} step={0.5} />
+        <ParamField label="Duration" value={duration} onChange={setDuration} min={20} max={500} step={10} />
         <div className="mt-4">
           <RunButton onRun={run} />
         </div>
       </ResultCard>
 
       {result && (
-        <ResultCard title="序参量 R(t)">
-          <Waveform data={result.R} height={80} color="var(--verdigris)" label={`R (同步度), 终值 ${result.R[result.R.length - 1].toFixed(3)}`} />
+        <ResultCard title="Order Parameter R(t)">
+          <Waveform data={result.R} height={80} color="var(--verdigris)" label={`R (synchronization), final ${result.R[result.R.length - 1].toFixed(3)}`} />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            R → 1: 完全同步; R → 0: 完全非同步
+            R → 1: fully synchronized; R → 0: fully desynchronized
           </p>
         </ResultCard>
       )}
 
       {phaseData.length > 0 && (
-        <ResultCard title="相变曲线 R(K)">
+        <ResultCard title="Phase Transition Curve R(K)">
           <TextScatter
             points={phaseData.map(d => ({ x: d.K, y: d.R_mean }))}
             width={40}
@@ -76,7 +77,7 @@ export default function KuramotoPage() {
             }))}
           />
           <p className="text-xs text-[var(--ink-light)] mt-2">
-            K 增大 → R 单调上升，发生同步相变
+            Increasing K → R rises monotonically; a synchronization phase transition occurs
           </p>
         </ResultCard>
       )}

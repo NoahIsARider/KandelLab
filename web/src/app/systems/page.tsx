@@ -4,11 +4,12 @@ import { ChapterHeading, OrnamentDivider } from '@/components/simulation-ui';
 export default function SystemsPage() {
   return (
     <article>
-      <ChapterHeading>III. 系统层 · Systems</ChapterHeading>
+      <ChapterHeading>III. System Level · Systems</ChapterHeading>
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        系统层研究神经系统如何实现感觉、运动、记忆与奖赏学习等功能。
-        从视觉皮层的方位选择性到小脑的运动学习，从 Hopfield 网络的联想记忆
-        到多巴胺系统的奖赏预测误差——每个系统都有独特的计算策略。
+        The system level studies how the nervous system implements sensation, movement, memory, and
+        reward-based learning. From orientation selectivity in visual cortex to cerebellar motor
+        learning, from associative memory in Hopfield networks to reward prediction error in the
+        dopamine system — each system has its own computational strategy.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
@@ -16,38 +17,38 @@ export default function SystemsPage() {
       <div className="space-y-4">
         <ModuleCard
           number="10a"
-          title="视觉系统"
-          subtitle="Gabor 滤波器与方位调谐"
+          title="Visual System"
+          subtitle="Gabor Filters and Orientation Tuning"
           href="/systems/vision"
-          desc="V1 简单细胞以 Gabor 函数描述感受野。调谐曲线表征细胞对不同朝向的偏好。"
+          desc="V1 simple cells have receptive fields described by Gabor functions. Tuning curves characterize each cell's preference for different orientations."
         />
         <ModuleCard
           number="10b"
-          title="听觉系统"
-          subtitle="频率调谐与耳蜗拓扑"
+          title="Auditory System"
+          subtitle="Frequency Tuning and Cochlear Tonotopy"
           href="/systems/audition"
-          desc="γ-tone 滤波组模拟基底膜频率分析。特征频率沿基底膜呈对数排列（tonotopy）。"
+          desc="A γ-tone filter bank mimics the basilar membrane's frequency analysis. Characteristic frequencies are arranged logarithmically along the membrane (tonotopy)."
         />
         <ModuleCard
           number="—"
-          title="运动系统"
-          subtitle="VOR 增益适应与小脑学习"
+          title="Motor System"
+          subtitle="VOR Gain Adaptation and Cerebellar Learning"
           href="/systems/motor"
-          desc="前庭-眼反射的增益通过小脑 Marr-Albus 规则进行误差驱动学习。"
+          desc="The vestibulo-ocular reflex gain is learned through error-driven cerebellar learning (Marr–Albus rule)."
         />
         <ModuleCard
           number="11"
-          title="联想记忆"
-          subtitle="Hopfield 网络"
+          title="Associative Memory"
+          subtitle="Hopfield Network"
           href="/systems/memory"
-          desc="w_ij = 1/N·Σξᵢξⱼ。异步更新使能量单调下降，损坏模式可恢复至存储模式。"
+          desc="w_ij = 1/N·Σξᵢξⱼ. Asynchronous updates monotonically decrease the energy, restoring corrupted patterns to stored memories."
         />
         <ModuleCard
           number="12"
-          title="奖赏学习"
-          subtitle="Rescorla-Wagner 与 TD(λ)"
+          title="Reward Learning"
+          subtitle="Rescorla–Wagner and TD(λ)"
           href="/systems/reward"
-          desc="ΔV = α·(λ-V)。奖赏预测误差驱动学习。TD 模型复现阻塞效应与多巴胺样信号。"
+          desc="ΔV = α·(λ-V). Reward prediction error drives learning. The TD model reproduces the blocking effect and dopamine-like signals."
         />
       </div>
     </article>

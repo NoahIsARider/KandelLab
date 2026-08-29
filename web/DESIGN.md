@@ -1,48 +1,50 @@
-# DESIGN.md — KandelLab 视觉规范
+# DESIGN.md — KandelLab Visual Specification
 
-## 气质与意象
-中世纪修道院图书馆中的手抄本。羊皮纸上以铁胆墨水书写的学术文献，铜版雕刻般的精确排版。一位解剖学者在晨光中翻阅的笔记本——严谨、沉静、永恒。
+## Character & Imagery
+A manuscript from a medieval monastery library. Academic text written in iron-gall ink on
+parchment, engraved with the precision of copperplate. An anatomist's notebook opened in the
+morning light — rigorous, quiet, timeless.
 
-## 视觉策略
-- 无 SVG、无 JS 绘图，所有可视化均通过 CSS 布局 + HTML 元素实现
-- 背景使用 CSS 渐变模拟羊皮纸纹理
-- 装饰元素仅使用 Unicode 字符（❧ ☙ ※ ⁂ ◆ ◇ ▪ ▫ — ‖）
-- 数据图表使用 CSS Grid + div 宽度/高度表示数值
+## Visual Strategy
+- No SVG, no JS charting: every visualization is built from CSS layout + HTML elements
+- Background uses CSS gradients to simulate parchment texture
+- Decorative elements are Unicode characters only (❧ ☙ ※ ⁂ ◆ ◇ ▪ ▫ — ‖)
+- Data charts use CSS Grid + div width/height to encode values
 
-## 配色方案
-| 用途 | 色值 | 意象 |
-|------|------|------|
-| 主背景 | #f5e6c8 | 陈年羊皮纸 |
-| 次背景 | #efe0c6 | 稍浅的纸面 |
-| 正文 | #3d2b1f | 铁胆墨水 |
-| 标题 | #6b3a2a | 赭石红棕 |
-| 强调 | #8b4513 | 马鞍褐 |
-| 边框 | #c4a882 | 旧纸边缘 |
-| 数据高亮 | #2d5016 | 铜绿 |
-| 警告/抑制 | #7c2d12 | 铁锈红 |
-| 静默文字 | #78716c | 褪色墨迹 |
+## Color Palette
+| Purpose | Value | Imagery |
+|---------|-------|---------|
+| Primary background | #f5e6c8 | Aged parchment |
+| Secondary background | #efe0c6 | Slightly lighter page |
+| Body text | #3d2b1f | Iron-gall ink |
+| Headings | #6b3a2a | Ochre red-brown |
+| Accent | #8b4513 | Saddle brown |
+| Borders | #c4a882 | Old paper edge |
+| Data highlight | #2d5016 | Verdigris green |
+| Warning / inhibition | #7c2d12 | Rust red |
+| Muted text | #78716c | Faded ink |
 
-## 字体排版
-- 标题/装饰：`Crimson Pro`（Google Fonts，衬线体，学术感）
-- 正文：`Crimson Text`（Google Fonts，高可读性衬线）
-- 数据/公式：`JetBrains Mono`（等宽，精确）
-- 中文回退：思源宋体（Noto Serif SC）
+## Typography
+- Headings / ornaments: `Crimson Pro` (Google Fonts, serif, scholarly)
+- Body: `Crimson Text` (Google Fonts, highly readable serif)
+- Data / formulas: `JetBrains Mono` (monospace, precise)
+- CJK fallback: Noto Serif SC
 
-## 布局与响应式
-- 最大宽度 960px 居中（手稿页面感）
-- 左右大边距（模拟书页留白）
-- 双线边框分隔章节
-- 响应式：移动端缩减边距，保持可读性
+## Layout & Responsiveness
+- Max width 960px, centered (manuscript page feel)
+- Generous side margins (simulated page margins)
+- Double-line borders separate sections
+- Responsive: reduced margins on mobile, readability preserved
 
-## 交互与状态
-- 极简动效：仅 opacity 淡入
-- 悬停：文字颜色微变 + 底部出现细线
-- 无弹跳、无缩放、无阴影浮起
+## Interaction & State
+- Minimal motion: opacity fade only
+- Hover: slight text-color shift + thin underline
+- No bounce, no scale, no floating shadows
 
-## 设计禁忌
-- 禁止使用任何 SVG 元素或 JS 绑定的绘图库
-- 禁止使用现代 UI 风格（圆角大卡片、渐变按钮、毛玻璃）
-- 禁止使用 emoji 作为装饰
-- 禁止使用鲜艳的蓝/紫/粉色调
-- 禁止使用 box-shadow 制造现代浮起感
-- 禁止使用超过 2 种字重对比
+## Design Prohibitions
+- No SVG elements or JS-bound charting libraries
+- No modern UI styling (rounded cards, gradient buttons, glassmorphism)
+- No emoji as decoration
+- No bright blue/purple/pink tones
+- No box-shadow to create modern elevation
+- No more than 2 font-weight contrasts

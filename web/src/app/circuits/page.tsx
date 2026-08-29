@@ -4,11 +4,12 @@ import { ChapterHeading, OrnamentDivider } from '@/components/simulation-ui';
 export default function CircuitsPage() {
   return (
     <article>
-      <ChapterHeading>II. 回路层 · Circuits</ChapterHeading>
+      <ChapterHeading>II. Circuit Level · Circuits</ChapterHeading>
       <p className="text-sm text-[var(--ink)] mb-4 leading-relaxed">
-        回路层探索多神经元之间的相互作用。从突触可塑性的 Hebb 规则，
-        到侧抑制增强感觉对比，再到兴奋-抑制群体的动力学与振荡同步——
-        这些机制构成了神经计算的回路基础。
+        The circuit level explores interactions among multiple neurons. From the Hebbian rule of
+        synaptic plasticity, to lateral inhibition sharpening sensory contrast, to the dynamics of
+        excitatory–inhibitory populations and oscillatory synchronization —
+        these mechanisms form the circuit-level basis of neural computation.
       </p>
 
       <OrnamentDivider symbol="— ✦ —" />
@@ -16,31 +17,31 @@ export default function CircuitsPage() {
       <div className="space-y-4">
         <ModuleCard
           number="6"
-          title="Hebbian 学习"
-          subtitle="突触可塑性与 BCM 规则"
+          title="Hebbian Learning"
+          subtitle="Synaptic Plasticity and the BCM Rule"
           href="/circuits/hebbian"
-          desc="Δw = η·x·y。突触强度随前后神经元活动的相关性改变。BCM 规则引入滑动阈值区分 LTP 与 LTD。"
+          desc="Δw = η·x·y. Synaptic strength changes with the correlation between pre- and postsynaptic activity. The BCM rule introduces a sliding threshold separating LTP from LTD."
         />
         <ModuleCard
           number="7"
-          title="侧抑制"
-          subtitle="中心-周围拮抗与边缘增强"
+          title="Lateral Inhibition"
+          subtitle="Center–Surround Antagonism and Edge Enhancement"
           href="/circuits/lateral-inhibition"
-          desc="Difference-of-Gaussians 感受野。均匀区域响应平坦，边缘处出现 Mach band 效应。"
+          desc="Difference-of-Gaussians receptive field. Uniform regions elicit a flat response; edges produce Mach band effects."
         />
         <ModuleCard
           number="8"
-          title="Wilson-Cowan 模型"
-          subtitle="兴奋-抑制群体动力学"
+          title="Wilson–Cowan Model"
+          subtitle="Excitatory–Inhibitory Population Dynamics"
           href="/circuits/wilson-cowan"
-          desc="双群体 ODE 系统。可产生单稳态、双稳态、振荡等多种动力学行为。"
+          desc="A two-population ODE system. Produces a range of dynamical behaviors, including monostability, bistability, and oscillations."
         />
         <ModuleCard
           number="9"
-          title="Kuramoto 模型"
-          subtitle="相位振荡器同步"
+          title="Kuramoto Model"
+          subtitle="Synchronization of Phase Oscillators"
           href="/circuits/kuramoto"
-          desc="dθᵢ/dt = ωᵢ + K/N·Σsin(θⱼ-θᵢ)。耦合强度 K 增大时发生从非同步到同步的相变。"
+          desc="dθᵢ/dt = ωᵢ + K/N·Σsin(θⱼ-θᵢ). As the coupling strength K increases, the system undergoes a phase transition from desynchronization to synchronization."
         />
       </div>
     </article>

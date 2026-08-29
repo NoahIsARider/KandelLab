@@ -1,6 +1,7 @@
-"""KandelLab — 神经科学原理仿真系统。
+"""KandelLab — a simulation system for principles of neuroscience.
 
-细胞 → 回路 → 系统 → 认知，四层递进，12 个核心概念的 Python 从零实现。
+Cells → circuits → systems → cognition: four progressive layers implementing
+12 core concepts in Python from scratch.
 """
 
 try:

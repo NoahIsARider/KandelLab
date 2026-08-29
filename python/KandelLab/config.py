@@ -1,21 +1,23 @@
-"""KandelLab 全局配置 — 全部可调参数集中于此。
+"""KandelLab global configuration — all tunable parameters live here.
 
-所有仿真参数（离子浓度、通道参数、网络规模、时间步长等）统一定义在该文件，
-各模块通过 :func:`get` 按需读取，保证跨模块一致性并可整体调参。
+All simulation parameters (ion concentrations, channel parameters, network
+sizes, time steps, etc.) are defined in this single file. Modules read them
+on demand via :func:`get`, ensuring cross-module consistency and allowing
+whole-system tuning in one place.
 """
 
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------
-# 基础物理常量
+# Fundamental physical constants
 # ---------------------------------------------------------------------------
-R = 8.314462618                       # 气体常数 J/(mol·K)
-F = 96485.33212                       # 法拉第常数 C/mol
-T_CELSIUS = 37.0                      # 生理温度（摄氏度）
-T_KELVIN = T_CELSIUS + 273.15         # 生理温度（开尔文）
+R = 8.314462618                       # gas constant J/(mol·K)
+F = 96485.33212                       # Faraday constant C/mol
+T_CELSIUS = 37.0                      # physiological temperature (celsius)
+T_KELVIN = T_CELSIUS + 273.15         # physiological temperature (kelvin)
 
 # ---------------------------------------------------------------------------
-# 离子浓度（毫摩尔，教科书 Kandel 标准值）
+# Ion concentrations (millimolar, textbook Kandel standard values)
 # ---------------------------------------------------------------------------
 ION_CONCENTRATIONS = {
     "K":  {"o": 5.0,  "i": 140.0, "z": 1},
@@ -24,55 +26,55 @@ ION_CONCENTRATIONS = {
     "Cl": {"o": 120.0, "i": 4.2, "z": -1},
 }
 
-# 相对通透性（Gerstner Neuronal Dynamics 标准值，PK 归一化）
+# Relative permeabilities (Gerstner Neuronal Dynamics standard values, PK normalized)
 PERMEABILITIES = {"K": 1.0, "Na": 0.04, "Cl": 0.45}
 
 # ---------------------------------------------------------------------------
-# Hodgkin-Huxley（HH 1952，单位 mV / ms / µA/cm²）
+# Hodgkin-Huxley (HH 1952, units mV / ms / µA/cm²)
 # ---------------------------------------------------------------------------
 HH_DEFAULTS = {
-    "C_m":   1.0,        # 膜电容 µF/cm²
-    "g_Na":  120.0,      # 钠电导 mS/cm²
-    "g_K":   36.0,       # 钾电导 mS/cm²
-    "g_L":   0.3,        # 漏电导 mS/cm²
-    "E_Na":  +50.0,      # 钠平衡电位 mV
-    "E_K":   -77.0,      # 钾平衡电位 mV
-    "E_L":   -54.387,    # 漏平衡电位 mV
-    "V_rest": -65.0,     # 静息电位 mV
+    "C_m":   1.0,        # membrane capacitance µF/cm²
+    "g_Na":  120.0,      # sodium conductance mS/cm²
+    "g_K":   36.0,       # potassium conductance mS/cm²
+    "g_L":   0.3,        # leak conductance mS/cm²
+    "E_Na":  +50.0,      # sodium equilibrium potential mV
+    "E_K":   -77.0,      # potassium equilibrium potential mV
+    "E_L":   -54.387,    # leak equilibrium potential mV
+    "V_rest": -65.0,     # resting potential mV
 }
 
 # ---------------------------------------------------------------------------
-# 漏电积分发放（LIF）
+# Leaky integrate-and-fire (LIF)
 # ---------------------------------------------------------------------------
 LIF_DEFAULTS = {
-    "tau_m": 20.0,        # 膜时间常数 ms
-    "R_m":   100.0,       # 膜电阻 MΩ
-    "E_L":   -70.0,       # 漏平衡电位 mV
-    "V_th":  -55.0,       # 阈值 mV
-    "V_reset": -70.0,     # 复位电位 mV
-    "V_peak": 30.0,       # 峰值电位（仅用于解析 f-I 公式）
-    "tau_ref": 2.0,       # 绝对不应期 ms
+    "tau_m": 20.0,        # membrane time constant ms
+    "R_m":   100.0,       # membrane resistance MΩ
+    "E_L":   -70.0,       # leak equilibrium potential mV
+    "V_th":  -55.0,       # threshold mV
+    "V_reset": -70.0,     # reset potential mV
+    "V_peak": 30.0,       # peak potential (used only in the analytic f-I formula)
+    "tau_ref": 2.0,       # absolute refractory period ms
 }
 
 # ---------------------------------------------------------------------------
-# 突触（α 函数 PSP）
+# Synapse (α-function PSP)
 # ---------------------------------------------------------------------------
 SYNAPSE_DEFAULTS = {
-    "tau_rise": 1.0,      # 上升时间常数 ms
-    "tau_decay": 10.0,    # 衰减时间常数 ms
+    "tau_rise": 1.0,      # rise time constant ms
+    "tau_decay": 10.0,    # decay time constant ms
 }
 
 # ---------------------------------------------------------------------------
 # Hebbian / BCM
 # ---------------------------------------------------------------------------
 HEBBIAN_DEFAULTS = {
-    "eta": 0.01,          # 学习率
-    "theta_M": 1.0,       # BCM 滑动阈值参考值
-    "tau_theta": 1.0,     # 阈值滑动时间常数
+    "eta": 0.01,          # learning rate
+    "theta_M": 1.0,       # BCM sliding threshold reference value
+    "tau_theta": 1.0,     # threshold sliding time constant
 }
 
 # ---------------------------------------------------------------------------
-# Wilson-Cowan 兴奋-抑制群体
+# Wilson-Cowan excitatory-inhibitory population
 # ---------------------------------------------------------------------------
 WILSON_COWAN_DEFAULTS = {
     "tau_E": 8.0, "tau_I": 8.0,
@@ -82,82 +84,82 @@ WILSON_COWAN_DEFAULTS = {
 }
 
 # ---------------------------------------------------------------------------
-# Kuramoto 同步
+# Kuramoto synchronization
 # ---------------------------------------------------------------------------
 KURAMOTO_DEFAULTS = {
-    "N": 100,             # 振荡器个数
-    "omega_mean": 1.0,    # 固有频率均值 rad/s
-    "omega_std": 0.1,     # 固有频率标准差
+    "N": 100,             # number of oscillators
+    "omega_mean": 1.0,    # mean natural frequency rad/s
+    "omega_std": 0.1,     # natural frequency standard deviation
 }
 
 # ---------------------------------------------------------------------------
-# Gabor / 视觉
+# Gabor / vision
 # ---------------------------------------------------------------------------
 GABOR_DEFAULTS = {
-    "size": 64,           # 感受野尺寸（像素）
-    "sf": 0.1,            # 空间频率 cycles/pixel
-    "sigma": 8.0,         # 高斯包络标准差
-    "phi": 0.0,           # 相位
-    "kappa": 1.0,         # 纵横比
+    "size": 64,           # receptive field size (pixels)
+    "sf": 0.1,            # spatial frequency cycles/pixel
+    "sigma": 8.0,         # Gaussian envelope standard deviation
+    "phi": 0.0,           # phase
+    "kappa": 1.0,         # aspect ratio
 }
 
 # ---------------------------------------------------------------------------
-# γ-tone / 听觉
+# γ-tone / audition
 # ---------------------------------------------------------------------------
 AUDITION_DEFAULTS = {
-    "n_channels": 24,     # 滤波通道数
-    "fmin": 100.0,        # 最低特征频率 Hz
-    "fmax": 8000.0,       # 最高特征频率 Hz
-    "ERB_scale": 1.0,     # 等效矩形带宽系数
-    "order": 4,           # γ-tone 阶数
-    "fs": 20000.0,        # 采样率 Hz
+    "n_channels": 24,     # number of filter channels
+    "fmin": 100.0,        # lowest characteristic frequency Hz
+    "fmax": 8000.0,       # highest characteristic frequency Hz
+    "ERB_scale": 1.0,     # equivalent rectangular bandwidth coefficient
+    "order": 4,           # γ-tone order
+    "fs": 20000.0,        # sampling rate Hz
 }
 
 # ---------------------------------------------------------------------------
-# VOR / 运动
+# VOR / motor
 # ---------------------------------------------------------------------------
 VOR_DEFAULTS = {
-    "g0": 0.6,            # 初始增益
-    "target_g": 1.0,      # 目标增益
-    "eta": 0.05,          # 学习率
+    "g0": 0.6,            # initial gain
+    "target_g": 1.0,      # target gain
+    "eta": 0.05,          # learning rate
 }
 
 # ---------------------------------------------------------------------------
-# Hopfield 联想记忆
+# Hopfield associative memory
 # ---------------------------------------------------------------------------
 HOPFIELD_DEFAULTS = {
-    "N": 256,             # 神经元个数（16×16 像素）
-    "T_max": 200,         # 异步更新最大迭代
+    "N": 256,             # number of neurons (16×16 pixels)
+    "T_max": 200,         # maximum asynchronous update iterations
 }
 
 # ---------------------------------------------------------------------------
-# 奖赏学习 RW / TD
+# Reward learning RW / TD
 # ---------------------------------------------------------------------------
 REWARD_DEFAULTS = {
-    "alpha": 0.1,         # RW 学习率
-    "gamma": 0.9,         # TD 折扣因子
+    "alpha": 0.1,         # RW learning rate
+    "gamma": 0.9,         # TD discount factor
 }
 
 # ---------------------------------------------------------------------------
-# 漂移扩散模型（DDM）
+# Drift-diffusion model (DDM)
 # ---------------------------------------------------------------------------
 DDM_DEFAULTS = {
-    "dt": 0.001,          # 时间步 s
-    "T_max": 3.0,         # 最长决策时间 s
-    "boundary": 1.0,      # 吸收边界 ±a
+    "dt": 0.001,          # time step s
+    "T_max": 3.0,         # maximum decision time s
+    "boundary": 1.0,      # absorbing boundary ±a
 }
 
 # ---------------------------------------------------------------------------
-# 数值积分
+# Numerical integration
 # ---------------------------------------------------------------------------
 NUMERICS = {
-    "default_dt": 0.01,   # ms（HH 等微分方程默认步长）
-    "seed": 42,           # 全局随机种子（确定性）
+    "default_dt": 0.01,   # ms (default step for ODEs such as HH)
+    "seed": 42,           # global random seed (deterministic)
 }
 
 
 def get(section: str, key: str, default=None):
-    """读取配置项；section 不存在或 key 缺失时返回 default。"""
+    """Read a configuration item; return default if the section or key is missing."""
     table = globals().get(section.upper(), None)
     if isinstance(table, dict) and key in table:
         return table[key]
@@ -165,7 +167,7 @@ def get(section: str, key: str, default=None):
 
 
 def update(section: str, key: str, value):
-    """更新配置项；若 section 不是 dict 则抛出 TypeError。"""
+    """Update a configuration item; raise TypeError if the section is not a dict."""
     table = globals().get(section.upper(), None)
     if not isinstance(table, dict):
         raise KeyError(f"unknown config section: {section}")
