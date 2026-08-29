@@ -1,7 +1,6 @@
 {
-  "name": "kandellab-web",
+  "name": "kandellab",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "build": "bash ./scripts/build.sh",
     "dev": "bash ./scripts/dev.sh",
@@ -10,7 +9,10 @@
     "lint:build": "eslint . --quiet",
     "lint:style": "stylelint \"src/**/*.css\"",
     "ts-check": "tsc -p tsconfig.json",
-    "validate": "pnpm dlx concurrently --group --names lint-tsc,lint-build,lint-style \"pnpm ts-check\" \"pnpm lint:build\" \"pnpm lint:style\""
+    "validate": "pnpm dlx concurrently --group --names lint-tsc,lint-build,lint-style \"pnpm ts-check\" \"pnpm lint:build\" \"pnpm lint:style\"",
+    "build:lib": "tsup --tsconfig tsconfig.lib.json",
+    "prepublishOnly": "pnpm build:lib",
+    "prepack": "pnpm build:lib"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -70,10 +72,39 @@
     "stylelint": "^16.4.0",
     "stylelint-config-standard": "^38.0.0",
     "tailwindcss": "^4",
+    "tsup": "^8.5.1",
     "typescript": "^5"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "pnpm": ">=9.0.0"
+  },
+  "description": "Neuroscience Principles Code Lab \u2014 implement Kandel's Principles of Neural Science models in TypeScript. Pure, browser-safe simulation engine.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "neuroscience",
+    "teaching",
+    "computational-neuroscience",
+    "hodgkin-huxley",
+    "hopfield",
+    "drift-diffusion"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NoahIsARider/KandelLab.git"
   }
 }
