@@ -1,0 +1,93 @@
+name: publish
+
+# Release both the PyPI package (kandellab) and the npm library (kandellab)
+# using OIDC trusted publishing — no tokens required.
+#
+# Prerequisites (one-time, on the package websites):
+#   PyPI:  pypi.org → Account settings → Publishing → Add pending publisher
+#          (project: kandellab, repo: NoahIsARider/KandelLab, workflow: publish.yml)
+#   npm:   npmjs.com/package/kandellab/access → Add new publisher
+#          (repo: NoahIsARider/KandelLab, workflow: publish.yml)
+#
+# Trigger:  git tag v1.0.0 && git push --tags
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write   # required for OIDC trusted publishing (PyPI + npm)
+  contents: write   # required for GitHub Release
+
+jobs:
+  pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build sdist + wheel
+        working-directory: python
+        run: |
+          pip install build
+          python -m build
+
+      - name: Run tests before publishing
+        working-directory: python
+        run: |
+          pip install -e '.[dev]'
+          python -m pytest tests/ -q
+
+      - name: Publish to PyPI (OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
+
+  npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'   # npm >= 11.5.1 required for OIDC publishing
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install & build library
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build:lib
+
+      - name: Publish to npm (OIDC + provenance)
+        working-directory: web
+        run: npm publish --provenance --access public
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: [pypi, npm]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Collect Python dist
+        run: |
+          pip install build
+          python -m build python --outdir /tmp/dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            /tmp/dist/*.whl
+            /tmp/dist/*.tar.gz
+          generate_release_notes: true

@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: Python tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        working-directory: python
+        run: |
+          pip install -e '.[dev]'
+      - name: Test
+        working-directory: python
+        run: python -m pytest tests/ -q
+
+  web:
+    name: Web validate + build lib
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Install
+        working-directory: web
+        run: pnpm install --frozen-lockfile
+      - name: TypeScript check + lint
+        working-directory: web
+        run: pnpm ts-check
+      - name: Build library
+        working-directory: web
+        run: pnpm build:lib
